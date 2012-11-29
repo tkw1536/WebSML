@@ -1,0 +1,25 @@
+(function($){
+	//Tab Hack: Enables Tabs in text areas
+	$.fn.tab_hack = function(opt){
+		if(opt=='disable'){
+			this.find("textarea").off("keydown.tabHack");
+		} else {
+			this.find("textarea").on("keydown.tabHack", function (e) {
+					if (e.keyCode == 9) {
+						var myValue = "\t";
+						var startPos = this.selectionStart;
+						var endPos = this.selectionEnd;
+						var scrollTop = this.scrollTop;
+						this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos,this.value.length);
+						this.focus();
+						this.selectionStart = startPos + myValue.length;
+						this.selectionEnd = startPos + myValue.length;
+						this.scrollTop = scrollTop;
+
+						e.preventDefault();
+					}
+				});
+		}
+		return this;
+	}
+})(jQuery)
