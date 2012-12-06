@@ -107,7 +107,7 @@ var FileServer = function(Provider, options){
 				Provider.emit('fs_deleteFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': false});
 			}
 		} else {
-			Provider.emit('fs_deleteFile', 'success': false});
+			Provider.emit('fs_deleteFile', {'success': false});
 		}
 	})
 	.on('fs_deleteDir', function(data){

@@ -20,11 +20,12 @@ auth.validCredentials = function(auth)
 auth.getUserData = function(auth)
 {
 	//TODO: GET USER DATA from auth key
-	return 
+	var data =  
 	{
-		"HomeFolder": "/tmp/";
-		"FSFolder": "/tmp/";
+		"HomeFolder": "/tmp/",
+		"FSFolder": "/tmp/"
 	};
+	return data;
 };
 
 

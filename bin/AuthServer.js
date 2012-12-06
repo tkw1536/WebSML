@@ -1,6 +1,6 @@
 var auth = require("./auth");
 
-var authServer = function(Provider, onAuth)
+var authServer = function(Provider, onAuth){
 	return Provider.new_client(
 		function(socket)
 			{
