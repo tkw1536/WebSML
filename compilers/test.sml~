@@ -1,0 +1,22 @@
+fun readAllChars(filename) = 
+	let
+		val file = TextIO.openIn(filename)
+		fun read(input:char option) =
+			case input of
+				NONE => (TextIO.closeIn(file); [])
+				| SOME(c) => c::read(TextIO.input1(file))
+	in
+		read(TextIO.input1(file))
+	end;
+(* write all characters to a file;return success *)
+fun writeAllChars(filename, ls) = 
+	let
+		val file = TextIO.openOut(filename)
+		fun write([]) = (TextIO.closeOut(file); true)
+		| write(h::t) = (TextIO.output1(file, h);write(t);true)
+	in
+		write(ls)
+	end
+	handle _ => false
+
+writeAllChars("hello.txt", explode("123"));

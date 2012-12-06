@@ -1,0 +1,13 @@
+var compiler = require("./compiler"),
+path = require("path");
+
+compiler = compiler.makeCompiler('node', true)
+
+compiler.run('\
+var fs = require("fs"); \
+fs.writeFile("hello.txt", "Hello");\
+', path.join(__dirname, "tmp/fs"));
+
+process.on('SIGINT', function(){
+	compiler.ctrlD();
+});

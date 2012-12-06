@@ -1,0 +1,31 @@
+var lib = require("../lib/misc");
+
+//Authorisation
+var auth = {};
+
+auth.makeCredentials = function(user, pass){
+	//grab authentication and return an auth-like object
+	return {'user': user, 'pass': pass};//TODO: Enycrypt password
+};
+
+auth.validCredentials = function(auth)
+{
+	//check if a credentials object is valid
+	//TODO: Implement proper check here
+	var user = session['user'];
+	var pass = session['pass'];
+	return (user=='admin' && pass=='admin');
+};
+
+auth.getUserData = function(auth)
+{
+	//GET USER DATA from auth key
+	return 
+	{
+		"HomeFolder": "/tmp/";
+		"FSFolder": "/tmp/";
+	};
+};
+
+
+module.exports = auth;

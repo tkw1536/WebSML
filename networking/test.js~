@@ -1,0 +1,13 @@
+var webserver = require("./webserver");
+
+webserver(
+	{
+	'ignore': function(e){
+			
+	},
+	'root': './',
+	'dynExtension': 'dynamic',//dynamic files
+	'specialFile': function(fn, re){
+		return "test.js";
+	}
+});
