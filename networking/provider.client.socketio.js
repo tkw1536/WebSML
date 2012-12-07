@@ -1,7 +1,7 @@
 //SOCKETIO Client
 var client = (function(){
 	var cl = {};
-	var socket = io.connect('http://localhost');//Connect to localhost or whatever...
+	var socket = io.connect('http://localhost', {'reconnect': false});//Connect to localhost or whatever...
 	cl.on = function(ev, handler){
 		socket.on(ev, handler);
 		return cl;

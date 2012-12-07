@@ -1,4 +1,0 @@
-require("coffee-script")
-config = require "config.coffee"
-
-console.log config
