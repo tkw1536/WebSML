@@ -1,4 +1,4 @@
-//TODO: Implement client logic here
+//TODO: IMplement fileserver & and compilerServer client
 
 client.tryAuthorize = function(name, pass, callback){
 	client

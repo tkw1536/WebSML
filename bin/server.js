@@ -1,11 +1,11 @@
 //Make a simple echo Server
 var path = require("path"),
-config = require("./../config/config"),
-compiler = require("./../compilers/compiler"),
+config = require("./../config/config")
 webserver = require("./../networking/webserver"),
 provider = require("./../networking/provider"),
-authServer = require("./AuthServer");
-FileServer = require("./FileServer");
+authServer = require("./AuthServer"),
+FileServer = require("./FileServer"),
+CompilerServer = require("./../compiler/compilerServer");
 
 var provider_data = provider.getProvider(config.server.provider);//Get the provider
 
@@ -20,6 +20,7 @@ var server = webserver({
 var provider = authServer(new provider_data[0](server, config.server.port), 
 	function(socket, cred, userData){
 		var fs = new FileServer(socket, {'root': userData['FSFolder']});
+		var cs = new CompilerServer(socket, userData['TmpFile'], userData['HomeFolder']);
 	}
 );
 

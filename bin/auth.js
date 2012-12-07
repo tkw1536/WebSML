@@ -23,7 +23,7 @@ auth.getUserData = function(auth)
 	var data =  
 	{
 		"HomeFolder": "/tmp/",
-		"FSFolder": "/tmp/"
+		"TmpFile": "/tmp/tmp.txt"
 	};
 	return data;
 };
