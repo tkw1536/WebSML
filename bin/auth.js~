@@ -8,10 +8,11 @@ auth.makeCredentials = function(user, pass){
 	return {'user': user, 'pass': pass};//TODO: Enycrypt password
 };
 
-auth.validCredentials = function(auth)
+auth.validCredentials = function(session)
 {
 	//check if a credentials object is valid
 	//TODO: Implement proper check here
+	console.log(session);
 	var user = session['user'];
 	var pass = session['pass'];
 	return (user=='admin' && pass=='admin');
@@ -19,12 +20,13 @@ auth.validCredentials = function(auth)
 
 auth.getUserData = function(auth)
 {
-	//GET USER DATA from auth key
-	return 
+	//TODO: GET USER DATA from auth key
+	var data =  
 	{
-		"HomeFolder": "/tmp/";
-		"FSFolder": "/tmp/";
+		"HomeFolder": "/tmp/",
+		"FSFolder": "/tmp/"
 	};
+	return data;
 };
 
 

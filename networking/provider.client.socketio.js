@@ -8,7 +8,7 @@ var client = (function(){
 	};
 	cl.once = function(ev, handler){
 		socket.once(ev, handler);
-		return cl;	
+		return cl;
 	};
 	cl.off = function(ev){
 		socket.off(ev);
@@ -18,4 +18,5 @@ var client = (function(){
 		socket.emit(ev, args);
 		return cl;	
 	};
+	return cl;
 })();

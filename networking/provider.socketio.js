@@ -22,10 +22,10 @@ module.exports = provider.ServiceProvider(
 				function(ev){//off
 					sock.removeAllListeners(ev);
 				},
-				function(ev, args){//off
+				function(ev, args){//emit
 					sock.emit(ev, args);
 				},
-				function(){
+				function(){//end
 					sock.disconnect();
 				}
 			);			

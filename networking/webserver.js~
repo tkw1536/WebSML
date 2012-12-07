@@ -39,7 +39,6 @@ var webServer = function(opts, mime){
 		"css": "text/css"
 	}, mime);
 	
-	
 	return http.createServer(function(req, res) {//create the server
 		var uri = url.parse(req.url).pathname;
 		uri = lib.endsWith(uri, "/")?uri+index:uri;//Directory index files
@@ -65,8 +64,8 @@ var webServer = function(opts, mime){
 				return;
 			}
 			try{
-			var mimeType = mimeTypes[lastMember(path.extname(filename).split("."))];
-			} catch(e){var mimeType = "text/plain";}
+			var mimeType = mimeTypes[lib.lastMember(path.extname(filename).split("."))];
+			} catch(e){console.log(e); var mimeType = "text/plain";}
 			res.writeHead(200, {'Content-Type':mimeType});
 	
 			var fileStream = fs.createReadStream(filename);//pump to the client

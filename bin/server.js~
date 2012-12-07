@@ -5,7 +5,7 @@ compiler = require("./../compilers/compiler"),
 webserver = require("./../networking/webserver"),
 provider = require("./../networking/provider"),
 authServer = require("./AuthServer");
-FileServer = require("./fileServer");
+FileServer = require("./FileServer");
 
 var provider_data = provider.getProvider(config.server.provider);//Get the provider
 
@@ -17,9 +17,9 @@ var server = webserver({
 	'specialFile': function(){return provider_data[1];}
 });
 
-var provider = AuthServer(new provider_data[0](server, config.server.port), 
+var provider = authServer(new provider_data[0](server, config.server.port), 
 	function(socket, cred, userData){
-		var fs = new FileServer(socket, {'root': userData['FSFolder']})
+		var fs = new FileServer(socket, {'root': userData['FSFolder']});
 	}
 );
 

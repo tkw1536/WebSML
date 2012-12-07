@@ -8,7 +8,7 @@ auth.makeCredentials = function(user, pass){
 	return {'user': user, 'pass': pass};//TODO: Enycrypt password
 };
 
-auth.validCredentials = function(auth)
+auth.validCredentials = function(session)
 {
 	//check if a credentials object is valid
 	//TODO: Implement proper check here

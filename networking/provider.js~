@@ -1,3 +1,5 @@
+var path = require('path');
+
 var Service = {};
 //for the entire system
 Service.ServiceProvider = function(init, new_client, end){
@@ -34,7 +36,7 @@ Service.SocketServiceProvider = function(on, once, off, emit, end){
 	};
 
 	this.emit = function(ev, args){
-		off(ev);
+		emit(ev);
 		return this;	
 	};
 
@@ -46,7 +48,7 @@ Service.SocketServiceProvider = function(on, once, off, emit, end){
 
 Service.getProvider = function(prov){
 	return [require("./provider."+prov+".js"), 
-		path.resolve("./provider.client."+prov+".js")
+		path.resolve(path.join(__dirname, "./provider.client."+prov+".js"))];
 };
 
 

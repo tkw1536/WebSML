@@ -36,7 +36,7 @@ Service.SocketServiceProvider = function(on, once, off, emit, end){
 	};
 
 	this.emit = function(ev, args){
-		off(ev);
+		emit(ev, args);
 		return this;	
 	};
 
