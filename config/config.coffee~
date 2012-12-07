@@ -1,5 +1,0 @@
-
-config = 
-	hello: "test"
-
-module.exports = config
