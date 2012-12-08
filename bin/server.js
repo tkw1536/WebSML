@@ -5,7 +5,7 @@ webserver = require("./../networking/webserver"),
 provider = require("./../networking/provider"),
 authServer = require("./AuthServer"),
 FileServer = require("./FileServer"),
-CompilerServer = require("./../compiler/compilerServer");
+CompilerServer = require("./../compilers/compilerServer");
 
 var provider_data = provider.getProvider(config.server.provider);//Get the provider
 

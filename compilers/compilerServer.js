@@ -2,7 +2,7 @@ var lib = require("./../lib/misc");
 var compiler = require("./compiler");
 var config = require("./../config/config");
 
-var CONST_COMPILERCONFIG = compiler.server.provider;
+var CONST_COMPILERCONFIG = config.server.provider;
 
 var compilerServer = function(Provider, tmpfile, cd){
 	var isRunning = 0;
