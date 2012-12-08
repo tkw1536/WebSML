@@ -1,16 +1,23 @@
 jQuery(function($){
 	$("#welcomeMessage")
 	.remove();
-	var PageDiv = $("#pageRemainder").show().removeAttr('id');
+	var PageDiv = $("#pageRemainder").addClass('login').show().removeAttr('id');
 	//Make a login form
 	var LoginForm = $("<form>");
 	var UserBox = $("<input type='text'>");
 	var PassBox = $("<input type='password'>");
 
-	var WaitingDiv = $("<div>").text("Authorizing...");
+	var WaitingDiv = $("<div class='AuthBox'>").html("<b>Authorizing...</b>");
 	PageDiv.append(WaitingDiv);
+
 	LoginForm
-	.append(UserBox, "<br />", PassBox, "<br />", "<input type='submit' value='Login'>")
+	.append(
+		$("<table>").append(
+			$("<tr>").append("<td>Username:</td>", $("<td>").append(UserBox)),
+			$("<tr>").append("<td>Password:</td>", $("<td>").append(PassBox)),
+			$("<tr colspan='2'>").append("<td><input type='submit' value='Login'></td>")
+		)
+	)
 	.appendTo(PageDiv);
 	var EnableLogin = function(message){
 		WaitingDiv.hide();
@@ -49,7 +56,7 @@ jQuery(function($){
 	var Step_Two = function(){
 		LoginForm.remove();
 		WaitingDiv.remove();
-		PageDiv.text("UNIMPLEMENTED");
+		PageDiv.removeClass('login').text("UNIMPLEMENTED");
 	};
 
 

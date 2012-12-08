@@ -1,4 +1,74 @@
-#pageRemainder{
+html, body{
+	/* resets */
+	height: 100%; 
+	width: 100%; 
+	margin: 0; 
+	padding: 0; 
+	background-color: #F0F0F0;
+}
+
+#pageRemainder{/* hide initial div */
 	display:none; 
 	visibility: hidden; 
+}
+
+
+.login, .login>form>div, .AuthBox{
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+/* login */
+.login{
+	display: inline-block;
+    	text-align: center;
+	width: 400px;
+	height: 200px; 
+	background-color: yellow; 
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -200px;
+	margin-top: -100px; 
+	padding: 0; 
+}
+
+.login>form{
+	position: fixed;
+	left: 50%;
+	top: 50%; 
+	width: 300px;
+	height: 150px;
+	margin-left: -150px;
+	margin-top: -75px;
+}
+
+.login>form>div{
+	background-color: red;
+	width: 300px; 
+	
+}
+
+.AuthBox{
+	background-color: green; 
+	position: relative;
+	left: 50%;
+	top: 10%; 
+	width: 300px;
+	margin-left: -150px;
+}
+
+input{
+	display: inline; 
+	float: right; 
+	text-align:right;
+}
+
+table, tr, td{
+	border: none; 
+}
+
+tr>td{
+	width: 100%; 
 }
