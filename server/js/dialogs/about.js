@@ -44,7 +44,7 @@ jQuery(function(){
 		}).attr('target', '_blank');
 		return item;
 	};
-	var ul = $("<ul>").appendTo(dialog.about.find("#abouttab-1"));
+	var ul = $("<ul>").appendTo(dialog.about.find("#abouttab-2"));
 	for(var i=0;i<Softwares.length;i++){
 		ul.append(MakeItem(Softwares[i]));
 	}
