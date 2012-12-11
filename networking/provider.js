@@ -1,14 +1,16 @@
 var path = require('path');
 
+var ERROR_HANDLER = function(e){console.log("FATAL: PROVIDER ERROR"); console.log(e); process.exit(); };//TODO: Properly handle this
+
 var Service = {};
 //for the entire system
 Service.ServiceProvider = function(init, new_client, end){
 	return function(server, port)
 	{
-		var initObj = init(server, port);
+		var initObj = init(server, port, ERROR_HANDLER);
 		this.new_client = function(handler)
 		{
-			new_client(initObj, handler);
+			new_client(initObj, handler, ERROR_HANDLER);
 			return this;
 		};
 		this.end = function(){

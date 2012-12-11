@@ -19,8 +19,8 @@ var server = webserver({
 
 var provider = authServer(new provider_data[0](server, config.server.port), 
 	function(socket, cred, userData){
-		var fs = new FileServer(socket, {'root': userData['FSFolder']});
-		var cs = new CompilerServer(socket, userData['TmpFile'], userData['HomeFolder']);
+		var fs = new FileServer(socket, {'root': userData['HomeFolder']});
+		var cs = new CompilerServer(socket, userData['HomeFolder'], userData['HomeFolder']);
 	}
 );
 

@@ -1,31 +1,28 @@
-var lib = require("../lib/misc");
+//Authorisation Module
 
-//Authorisation
+//TODO: Properly implement async authorisation
 var auth = {};
 
-auth.makeCredentials = function(user, pass){
+auth.makeCredentials = function(user, pass, callback){
 	//grab authentication and return an auth-like object
-	return {'user': user, 'pass': pass};//TODO: Enycrypt password
+	callback({'user': user, 'pass': pass}, false);
 };
 
-auth.validCredentials = function(session)
+auth.validCredentials = function(session, callback)
 {
 	//check if a credentials object is valid
-	//TODO: Implement proper check here
 	var user = session['user'];
 	var pass = session['pass'];
-	return (user=='admin' && pass=='admin');
+	callback(user=='admin' && pass=='admin');
 };
 
-auth.getUserData = function(auth)
+auth.getUserData = function(cred, callback)
 {
-	//TODO: GET USER DATA from auth key
 	var data =  
 	{
-		"HomeFolder": "/tmp/",
-		"TmpFile": "/tmp/tmp.txt"
+		"HomeFolder": "/tmp/"
 	};
-	return data;
+	callback(data);
 };
 
 

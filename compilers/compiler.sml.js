@@ -1,11 +1,15 @@
-/* Compiler SML */
+//SML Compiler
+var sml_compiler = require("./compiler_template");
 
-var compiler = {
-	"name": "StandardML", //Name
-	"executablePath": "/usr/share/smlnj/bin/sml", //Path of the executable
-	"FileInput": true, //Does this compiler accept files a as input or does it need an argument of the content
-	"FileInputExtension": "sml", //extension for file input if enabled above
-	"arguments": [] //additional arugments to pass before the filename
-}
+sml_compiler.Executable = "/usr/share/smlnj/bin/sml"; //Replace this by your executable
+sml_compiler.PreFileNameArgs = []; //Arguments prior to file name
+sml_compiler.PostFileNameArgs = []; //Arguments after file name
+sml_compiler.EmptyArguments = []; //Arguments for running compiler only. 
+sml_compiler.supportedFileExtensions = ['sml']; //Supported File Extensions
 
-module.exports = compiler;
+
+sml_compiler.compilerName = "Standard ML of New Jersey"; 
+sml_compiler.compilerVersion = "v110.74";
+sml_compiler.compilerDescription = "Standard ML of New Jersey Compiler. ";
+
+module.exports = sml_compiler;

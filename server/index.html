@@ -1,24 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html> 
 	<head>
-		<title>WebSML - Demo page</title>
+		<title>WebSML - Client Page</title>
 
 		<!-- CSS to include -->
 		<link href="/css/style.css" rel="stylesheet" type="text/css">
+		<link href="/css/smoothness/jquery-ui-1.9.2.css" rel="stylesheet" type="text/css">
+		<link href="/css/smoothness/jqueryui-menubar.css" rel="stylesheet" type="text/css">
 
 		<!-- JS to include -->
 		<!-- jQuery -->
-		<script type='text/javascript' src='./js/jquery-1.8.3.min.js'></script>
+		<script type='text/javascript' src='/js/jquery/jquery-1.8.3.min.js'></script>
+		<script type='text/javascript' src="/js/jquery/jquery.shortcuts.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery-ui-1.9.2.min.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.ui.menubar.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.ui.enabled_click.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.tabbeddialogs.js"></script>
 
 		<!-- Provider clients -->
 		<script type='text/javascript' src='/socket.io/socket.io.js'></script>
 		<script type='text/javascript' src='/provider.jsclient'></script>
 
-		<!-- Main Client code -->
-		<script type='text/javascript' src='/js/client.js'></script>
-		<script type='text/javascript' src='/js/jquery.client.js'></script>
+		<!-- Clients -->
+		<script type='text/javascript' src='/js/clients/AuthServer.js'></script>
+		<script type='text/javascript' src='/js/clients/FileServer.js'></script>
+		<script type='text/javascript' src='/js/clients/CompilerServer.js'></script>
+
+		<!-- Dialogs -->
+		<script type='text/javascript' src='/js/dialogs/dialog.js'></script>
+		<script type='text/javascript' src='/js/dialogs/about.js'></script>
+		<script type='text/javascript' src='/js/dialogs/help.js'></script>
+		<script type='text/javascript' src='/js/dialogs/settings.js'></script>
+		<script type='text/javascript' src='/js/dialogs/logout.js'></script>
+
+		<!-- Actions -->
+		<script type='text/javascript' src='/js/actions/action.js'></script>
+		<script type='text/javascript' src='/js/actions/init.js'></script>
+		<script type='text/javascript' src='/js/actions/menu.js'></script>
+		<script type='text/javascript' src='/js/actions/login.js'></script>
+		<script type='text/javascript' src='/js/actions/user_setup.js'></script>
+
+		<!-- Main Client Logic -->
+		<script type='text/javascript' src='/js/logic.js'></script>
+
 	</head>
 	<body>
+		<div id='content'>
+			<!-- Begin Menu -->
+			<ul id="menubar" class="menubar-icons" style="display:none; ">
+				<li>
+					<a href="#">File</a>
+					<ul>
+						<li class="ui-state-disabled"><a href="#">Open / New<span>Ctrl+O</span></a></li>
+						<li class="ui-state-disabled"><a href="#">Save<span>Ctrl+S</span></a></li>
+						<li class="ui-state-disabled"><a href="#">Close<span>Ctrl+X</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='logout'>Logout<span>Alt+X</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">Tools</a>
+					<ul>
+						<li class="ui-state-disabled"><a href="#" id='settings'>Preferences<span>Ctrl+E</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">Compiler</a>
+					<ul>
+						<li class="ui-state-disabled"><a href="#">Run Code<span>F5</span></a></li>
+						<li class="ui-state-disabled"><a href="#">Run Interpreter<span>Ctrl+F5</span></a></li>
+						<li class="ui-state-disabled"><a href="#">Send Ctrl+C<span>Ctrl+C</span></a></li>
+						<li class="ui-state-disabled"><a href="#">Send Ctrl+D<span>Ctrl+D</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='settings_compiler'>Compiler Settings<span>Ctrl+P</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">Help</a>
+					<ul>
+						<li><a href="#" id='help'>Help<span>F1</span></a></li>
+						<li><a href="#" id='about'>About<span>Alt+A</span></a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
 		<div id='welcomeMessage'>
 			You need JavaScript enabled to use this page. <br />
 			[If you have JavaScript enabled and still see this message, 
@@ -29,3 +92,4 @@
 		</div>
 	</body>
 </html>
+<!-- Nice, someone actually reading source code. -->

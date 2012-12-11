@@ -4,21 +4,22 @@ var config = require("./../config/config");
 
 var CONST_COMPILERCONFIG = config.server.provider;
 
-var compilerServer = function(Provider, tmpfile, cd){
+var compilerServer = function(Provider, root, cwd, userData){
 	var isRunning = 0;
 	var CompilerProcess = null;
 	Provider
 	.on('cs_on', function(data){
 		if(isRunning==0){
 			isRunning=1;
-			var code = data['code'];
-			CompilerProcess = compiler.make(CONST_COMPILERCONFIG);
+			var dirname = path.resolve(path.join(root, data['dirname']));
+			var filename = data['filename'];
+			CompilerProcess =  new (compiler(CONST_COMPILERCONFIG))
+			(function(success){
+				isRunning=2;
+				Provider.emit('cs_on', d);
+			}, cwd, userData, dirname, filename);
 			
 			CompilerProcess.Events
-			.once('processPrepared', function(d){
-				isRunning=2;
-				Provider.emit('cs_on', data);
-			})
 			.on('stdout', function(str){Provider.emit('cs_stdout', str);})
 			.on('stderr', function(str){Provider.emit('cs_stderr', str);})
 			.on('exit', function(code){

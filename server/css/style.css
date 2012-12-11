@@ -9,7 +9,10 @@ html, body{
 
 #pageRemainder{/* hide initial div */
 	display:none; 
-	visibility: hidden; 
+}
+
+#content{
+	display:none; 
 }
 
 

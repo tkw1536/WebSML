@@ -23,18 +23,23 @@ var FileServer = function(Provider, options){
 	};
 
 	Provider
-	on('fs_listDir', function(data){
-		var dir = path.join(root, data["dir"]);
+	.on('fs_listDir', function(data){
+		var dir = path.join(root, data["dir"])
 		if(pathCheck(dir)){
 			try{
-				var everything = fs.readdirSync(mypath);
-				var files = everything.filter(function(e, i, a){return isFile(path.join(mypath, e)); });
-				var dirs =  everything.filter(function(e, i, a){return isDir(path.join(mypath, e)); });
+				var everything = fs.readdirSync(dir);
+				var files = everything.filter(function(e, i, a){
+					return lib.isFile(path.join(dir, e)); 
+				});
+				var dirs = everything.filter(function(e, i, a){
+					return lib.isDir(path.join(dir, e)); 
+				});
 				if(!lib.sameDir(dir, root)){
 					dirs.unshift('..');//Directory up
 				}
 				Provider.emit('fs_listDir', {'dir': path.normalize(data['dir']), 'success': true, 'files': files, 'dirs': dirs});
 			} catch(e){
+				console.log(e);
 				Provider.emit('fs_listDir', {'success': false});
 			}
 		} else {
@@ -64,7 +69,7 @@ var FileServer = function(Provider, options){
 		var content = data["content"];
 		var overwrite = data["overwrite"];
 		var mypath = path.join(root, path.join(basedir, filename));
-		if(isIn(mypath, id_fs)){
+		if(pathCheck(mypath)){
 			//write a file
 			try{
 				if(overwrite==false && isFile(mypath)){throw "no overwrite";/*handled*/}
@@ -79,8 +84,9 @@ var FileServer = function(Provider, options){
 	})
 	.on('fs_makeDir', function(data){
 		var basedir = data["dir"];
+		var newdir = data["newdir"];
 		//read all File in basedir
-		var mypath = path.join(root, basedir);
+		var mypath = path.join(root, path.join(basedir, newdir));
 		if(pathCheck(mypath)){
 			//make dir
 			try{
@@ -111,11 +117,11 @@ var FileServer = function(Provider, options){
 		}
 	})
 	.on('fs_deleteDir', function(data){
-		var basedir = data["dir"];
+		var basedir = path.join(data["dir"], data['oldDir']);
 		var mypath = path.join(root, basedir);
-		if(pathCheck(mypath) && !lib.sameDir(mypath, id_fs)){
+		if(pathCheck(mypath) && !lib.sameDir(mypath, root)){
 			try{
-				removeRecursive(mypath, function(err){
+				lib.removeRecursive(mypath, function(err){
 					if(err){
 						Provider.emit('fs_deleteDir', {'dir': path.normalize(basedir), 'success': false});
 					} else {
@@ -124,6 +130,7 @@ var FileServer = function(Provider, options){
 				});
 			
 			} catch(e){
+				console.log(e);
 				Provider.emit('fs_deleteDir', {'dir': path.normalize(basedir), 'success': false});
 			}
 		} else {
@@ -141,3 +148,5 @@ var FileServer = function(Provider, options){
 		.off("fs_deleteDir");
 	};
 };
+
+module.exports = FileServer;

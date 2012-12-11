@@ -1,11 +1,15 @@
-/* Compiler SML */
+//NodeJS Compiler
+var node_compiler = require("./compiler_template");
 
-var compiler = {
-	"name": "Node", //Name
-	"executablePath": "/usr/bin/node", //Path of the executable
-	"FileInput": true, //Does this compiler accept files a as input or does it need an argument of the content
-	"FileInputExtension": "js", //extension for file input if enabled above
-	"arguments": [] //additional arugments to pass before the filename
-}
+node_compiler.Executable = "/usr/bin/node"; //Replace this by your executable
+node_compiler.PreFileNameArgs = []; //Arguments prior to file name
+node_compiler.PostFileNameArgs = []; //Arguments after file name
+node_compiler.EmptyArguments = []; //Arguments for running compiler only. 
+node_compiler.supportedFileExtensions = ['js']; //Supported File Extensions
 
-module.exports = compiler;
+
+node_compiler.compilerName = "NodeJS"; 
+node_compiler.compilerVersion = "v0.8.15";
+node_compiler.compilerDescription = "NodeJS compiler. ";
+
+module.exports = node_compiler;
