@@ -8,7 +8,7 @@ $(function(){
 		}
 		$("#ctrlc, #ctrld").parent().removeClass('ui-state-disabled');
 
-		var div = $("<div>").dterm(function(e){client.CompilerServerClient.stdIn(e); }, {"title": fileName+" ["+dirName+"] - Compiler", prompt: ">", greetings: null, keypress: function(ev){ztr$(document).trigger("keypress", ev);}, keydown:function(ev){$(document).trigger("keydown", ev);}});
+		var div = $("<div>").dterm(function(e){client.CompilerServerClient.stdIn(e); }, {"title": fileName+" ["+dirName+"] - Compiler", prompt: ">", greetings: null});
 
 		div.on('dialogclose', function(){
 			if(running){
