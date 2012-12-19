@@ -16,8 +16,24 @@ auth.validCredentials = function(session, callback)
 	callback(user=='admin' && pass=='admin');
 };
 
+auth.getUserFlag = function(session, name, callback){
+	//TODO: Implement setting user flgas
+};
+
+auth.setUserFlag = function(session, name, callback){
+	//TODO: Implement setting user flag	
+	this.validCredentials(session, function(s){
+		if(s==true){
+			
+		} else {
+			callback(undefined, false);		
+		}
+	});
+};
+
 auth.getUserData = function(cred, callback)
 {
+	//getUser Data
 	var data =  
 	{
 		"HomeFolder": "/tmp/"

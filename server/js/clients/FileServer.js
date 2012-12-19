@@ -13,6 +13,18 @@ client.FileServerClient = {};
 			}
 		}).emit('fs_listDir', {'dir': dir});
 	};
+
+	client.FileServerClient.resolveName = function(dir, filename, callback){
+		socket
+		.once('fs_resolveName', function(d){
+			var success = d['success'];
+			if(success){
+				callback(true, d['dir'], d['filename']);
+			} else {
+				callback(false);
+			}
+		}).emit('fs_resolveName', {'dir': dir, 'filename':filename});
+	};
 	
 	client.FileServerClient.readFile = function(dir, filename, callback){
 		socket

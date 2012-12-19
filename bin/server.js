@@ -3,7 +3,7 @@ var path = require("path"),
 config = require("./../config/config")
 webserver = require("./../networking/webserver"),
 provider = require("./../networking/provider"),
-authServer = require("./AuthServer"),
+authServer = require("./../auth/AuthServer"),
 FileServer = require("./FileServer"),
 CompilerServer = require("./../compilers/compilerServer");
 
@@ -17,10 +17,12 @@ var server = webserver({
 	'specialFile': function(){return provider_data[1];}
 });
 
-var provider = authServer(new provider_data[0](server, config.server.port), 
+var provider = new provider_data[0](server, config.server.port);
+
+var authServer = authServer(provider, 
 	function(socket, cred, userData){
 		var fs = new FileServer(socket, {'root': userData['HomeFolder']});
-		var cs = new CompilerServer(socket, userData['HomeFolder'], userData['HomeFolder']);
+		var cs = new CompilerServer(socket, userData['HomeFolder'], userData['HomeFolder'], authServer);
 	}
 );
 

@@ -4,7 +4,7 @@ socket = require("socket.io");
 
 module.exports = provider.ServiceProvider(
 	function(server, port, ERROR_HANDLER){//init
-		var io = socket.listen(server).on('error', function(e){ERROR_HANDLER(e); });
+		var io = socket.listen(server);
 		io.enable('browser client minification');  // send minified client
 		io.enable('browser client etag');          // apply etag caching logic based on version number
 		io.enable('browser client gzip');          // gzip the file
@@ -45,7 +45,6 @@ module.exports = provider.ServiceProvider(
 					sock.disconnect();
 				}
 			);
-			sock.on('error', function(e){ERROR_HANDLER(e); });	
 			handler(SProvider);
 		});	
 	},

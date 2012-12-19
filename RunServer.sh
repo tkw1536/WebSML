@@ -1,4 +1,4 @@
 #!/bin/bash
 cd bin
-sudo node server.js
+node server.js
 

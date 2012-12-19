@@ -23,8 +23,18 @@ var FileServer = function(Provider, options){
 	};
 
 	Provider
+	.on('fs_resolveName', function(data){
+		try{
+			var dir = data['dir'];
+			var file = data['filename'];
+			var fullPath = path.normalize(path.join(dir, file));
+			Provider.emit('fs_resolveName', {'success': true, 'dir': path.dirname(fullPath), 'filename': path.basename(fullPath)});
+		} catch(e){
+			Provider.emit('fs_resolveName', {'success': false});
+		}		
+	})
 	.on('fs_listDir', function(data){
-		var dir = path.join(root, data["dir"])
+		var dir = path.join(root, data["dir"]);
 		if(pathCheck(dir)){
 			try{
 				var everything = fs.readdirSync(dir);
@@ -39,7 +49,6 @@ var FileServer = function(Provider, options){
 				}
 				Provider.emit('fs_listDir', {'dir': path.normalize(data['dir']), 'success': true, 'files': files, 'dirs': dirs});
 			} catch(e){
-				console.log(e);
 				Provider.emit('fs_listDir', {'success': false});
 			}
 		} else {

@@ -64,14 +64,23 @@ html, body{
 
 input{
 	display: inline; 
+}
+
+input.r{
 	float: right; 
 	text-align:right;
 }
 
 table, tr, td{
-	border: none; 
+	border: none;
 }
 
 tr>td{
 	width: 100%; 
+}
+
+div.fill{
+	width: 100%;
+	height: 100%;
+	overflow: auto; 
 }

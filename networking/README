@@ -1,0 +1,11 @@
+The Provider System
+-------------------
+'Providers' are modules allowing real-time communication between server and client. So far only socket.io is implemented as a Provider, however other can be implemented by following the following guidelines: 
+
+1) provider.<name>.js
+	* should require the "provider" module. 
+	* should then use the provider.ServiceProvider function to implement a Provider and return it. 
+	* then event 'disconnect' should be implemented for each individual client. 
+2) provider.client.<name>.js
+	* client side version
+	* dynamically included for the client

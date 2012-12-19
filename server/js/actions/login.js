@@ -2,8 +2,8 @@
 	action.login = function(next_step){
 			var PageDiv = $("#pageRemainder").addClass('login').show();
 			var LoginForm = $("<form>");
-			var UserBox = $("<input type='text'>");
-			var PassBox = $("<input type='password'>");
+			var UserBox = $("<input type='text' class='r'>");
+			var PassBox = $("<input type='password' class='r'>");
 
 			var WaitingDiv = $("<div class='AuthBox'>").html("<b>Authorizing...</b>").appendTo(PageDiv);
 		LoginForm

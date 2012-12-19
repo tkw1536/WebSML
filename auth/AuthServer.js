@@ -1,7 +1,7 @@
 var auth = require("./auth");
 
 var authServer = function(Provider, onAuth){
-	return Provider.new_client(
+	Provider.new_client(
 		function(socket)
 			{
 				socket
@@ -36,6 +36,7 @@ var authServer = function(Provider, onAuth){
 				.emit('serverReady');
 			}	
 	);
+	return auth;
 }
 
 module.exports = authServer;

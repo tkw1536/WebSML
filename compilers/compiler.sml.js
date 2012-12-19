@@ -1,5 +1,5 @@
 //SML Compiler
-var sml_compiler = require("./compiler_template");
+var sml_compiler = require("./compiler_stdprocess");
 
 sml_compiler.Executable = "/usr/share/smlnj/bin/sml"; //Replace this by your executable
 sml_compiler.PreFileNameArgs = []; //Arguments prior to file name

@@ -11,7 +11,7 @@ var client = (function(){
 		return cl;
 	};
 	cl.off = function(ev){
-		socket.off(ev);
+		socket.removeAllListeners(ev);
 		return cl;	
 	};
 	cl.emit = function(ev, args){

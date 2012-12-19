@@ -7,28 +7,29 @@ events = require("events");
 function Compiler(callback, cwd, userData, dirname, filename)
 {
 	try{
+		var me = this;
 		this.Events = new events.EventEmitter();
 
 		this.Events
 		.on('ctrlC', function(){
-			if(this.runLevel != 3){
+			if(me.runLevel != 3){
 				return;	
 			}
 			//send CTRL-C
-			this.process.kill("SIGINT");		
+			me.process.kill("SIGINT");		
 		}).on('ctrlD', function(){
-			if(this.runLevel != 3){
+			if(me.runLevel != 3){
 				return;	
 			}
 			//send CTRL-D / End process
-			this.process.stdin.end();
+			me.process.stdin.end("");
 		}).on('stdIn', function(data){
-			if(this.runLevel != 3){
+			if(me.runLevel != 3){
 				return;
 			}
 			//send STDIN
-			this.process.stdin.resume()
-			this.process.write(data+"\n", 'utf-8');
+			me.process.stdin.resume()
+			me.process.stdin.write(data+"\n", 'utf-8');
 		});
 
 		this.runLevel = 1;
@@ -69,11 +70,11 @@ Compiler.prototype.start = function()
 	
 	this.process.stdout.on('data', function(data)
 	{
-		me.Events.emit("stdout", lib.toRealString(data));	
+		me.Events.emit("stdOut", lib.toRealString(data));	
 	});
 	
 	this.process.stderr.on('data', function (data) {
-	 	me.Events.emit("stderr", lib.toRealString(data));	
+	 	me.Events.emit("stdErr", lib.toRealString(data));	
 	});
 	
 	this.process.on('close', function(){
@@ -85,6 +86,13 @@ Compiler.prototype.start = function()
 		me.Events.emit('exit', {'code': code, 'signal': signal});
 	});
 	return true;
+};
+
+Compiler.getFlag = function(flag){//Implement flags here
+	return null;
+};
+Compiler.setFlag = function(flag, value){//Implement flags here
+	return false;
 };
 
 Compiler.Executable = "/bin/cat"; //Replace this by your executable

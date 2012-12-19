@@ -7,6 +7,8 @@
 		<link href="/css/style.css" rel="stylesheet" type="text/css">
 		<link href="/css/smoothness/jquery-ui-1.9.2.css" rel="stylesheet" type="text/css">
 		<link href="/css/smoothness/jqueryui-menubar.css" rel="stylesheet" type="text/css">
+		<link href="/css/codemirror.css" rel="stylesheet" type="text/css">
+		<link href="/css/jquery.terminal.css" rel="stylesheet" type="text/css">
 
 		<!-- JS to include -->
 		<!-- jQuery -->
@@ -15,7 +17,13 @@
 		<script type='text/javascript' src="/js/jquery/jquery-ui-1.9.2.min.js"></script>
 		<script type='text/javascript' src="/js/jquery/jquery.ui.menubar.js"></script>
 		<script type='text/javascript' src="/js/jquery/jquery.ui.enabled_click.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.dialogextend.1_0_1.js"></script>
 		<script type='text/javascript' src="/js/jquery/jquery.tabbeddialogs.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.codemirror.js"></script>
+		<script type='text/javascript' src="/js/jquery/jquery.terminal.js"></script>
+
+		<!-- CodeMirror -->
+		<script src="/js/codemirror/codemirror.js" type="text/javascript"></script>
 
 		<!-- Provider clients -->
 		<script type='text/javascript' src='/socket.io/socket.io.js'></script>
@@ -32,6 +40,9 @@
 		<script type='text/javascript' src='/js/dialogs/help.js'></script>
 		<script type='text/javascript' src='/js/dialogs/settings.js'></script>
 		<script type='text/javascript' src='/js/dialogs/logout.js'></script>
+		<script type='text/javascript' src='/js/dialogs/fileDialog.js'></script>
+		<script type='text/javascript' src='/js/dialogs/editor.js'></script>
+		<script type='text/javascript' src='/js/dialogs/compiler.js'></script>
 
 		<!-- Actions -->
 		<script type='text/javascript' src='/js/actions/action.js'></script>
@@ -51,9 +62,9 @@
 				<li>
 					<a href="#">File</a>
 					<ul>
-						<li class="ui-state-disabled"><a href="#">Open / New<span>Ctrl+O</span></a></li>
-						<li class="ui-state-disabled"><a href="#">Save<span>Ctrl+S</span></a></li>
-						<li class="ui-state-disabled"><a href="#">Close<span>Ctrl+X</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='open'>Open / New<span>Ctrl+O</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='save'>Save<span>Ctrl+S</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='close'>Close<span>Ctrl+X</span></a></li>
 						<li class="ui-state-disabled"><a href="#" id='logout'>Logout<span>Alt+X</span></a></li>
 					</ul>
 				</li>
@@ -66,10 +77,10 @@
 				<li>
 					<a href="#">Compiler</a>
 					<ul>
-						<li class="ui-state-disabled"><a href="#">Run Code<span>F5</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='compiler'>Run Code<span>F5</span></a></li>
 						<li class="ui-state-disabled"><a href="#">Run Interpreter<span>Ctrl+F5</span></a></li>
-						<li class="ui-state-disabled"><a href="#">Send Ctrl+C<span>Ctrl+C</span></a></li>
-						<li class="ui-state-disabled"><a href="#">Send Ctrl+D<span>Ctrl+D</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='ctrlc'>Send Ctrl+C<span>Ctrl+C</span></a></li>
+						<li class="ui-state-disabled"><a href="#" id='ctrld'>Send Ctrl+D<span>Ctrl+D</span></a></li>
 						<li class="ui-state-disabled"><a href="#" id='settings_compiler'>Compiler Settings<span>Ctrl+P</span></a></li>
 					</ul>
 				</li>

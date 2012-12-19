@@ -13,21 +13,22 @@ It has to module.export a class with the following properties:
 	* if argumentrs are given, runs the file in the given directory. 
 	* callback should be called once preparation is done, success should reflect if the process was successfull or not. 
 	* returns a new Compiler object. 
-* <function> start()
+* <function> start(<function> getFlag)
+	* The getFlag function returns flags of the compiler. 
 	* starts the process if it is ready. (After callback)
 	* returns boolean indicating if it was successfull or not. 
 * <EventEmitter> Events: 
-	* <Event> stderr({<string> data}): Raised when the compiler process writes to stderr
-	* <Event> stdout({<string> data}): Raised when the compiler process writes to stdout
+	* <Event> stdErr({<string> data}): Raised when the compiler process writes to stderr
+	* <Event> stdOut({<string> data}): Raised when the compiler process writes to stdout
 	* <Event> exit({<int> code, <int> signal}): Raised when the compiler process ends with the specefied code / signal. 
 	* <EventHandler> stdIn(<string> data): Sends data to stdin of the compiler process. 
 	* <EventHandler> ctrlC(): Sends CTRL-C to the process
 	* <EventHandler> ctrlD(): Sends CTRL-D to the process (and ends it). 
-
-* <static Array of strings> supportedFileExtensions: Array of File Extensions supported by the compiler. 
+* <static Array of strings> supportedFileExtensions: Array of File Extensions supported by the compiler, also implemented as compiler-flag 'compiler.fileTypes'. 
 * <static string> compilerName: Name of the compiler
 * <static string> compilerVersion: Version of the compiler
-* <static string> compilerDescription: Compiler description. 
+* <static string> compilerDescription: Compiler description
+* <static object> defaultFlags: Default flags
 
 
 If you use a standard compiler which runs on the normal command line, then the file compiler_stdprocess.js can be required, see that file for details.  
