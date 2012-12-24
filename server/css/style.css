@@ -84,3 +84,8 @@ div.fill{
 	height: 100%;
 	overflow: auto; 
 }
+
+/* JQuery UI Unclosable dialog */
+.noCloseDialog .ui-icon, .noCloseDialog .ui-dialog-titlebar-close{
+    display:none !important;
+}
