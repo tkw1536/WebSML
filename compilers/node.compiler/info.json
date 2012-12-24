@@ -1,0 +1,7 @@
+{
+	"name": "node.js",
+	"version": "v0.8.16",
+	"description": "Node.js - Event driven JavaScript ",
+	"supportedExtensions": ["js"],
+	"stdProcess": true
+}

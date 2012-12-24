@@ -3,10 +3,9 @@ var compiler = require("./compiler");
 var config = require("./../config/config"),
 path = require("path");
 
-var CONST_COMPILERCONFIG = config.mode;
+compiler.cachePackages(config.modes);
 
 var compilerServer = function(Provider, root, cwd, userData, authServer){
-	var COMPILER_CONSTRUCTOR = compiler(CONST_COMPILERCONFIG);
 	var isRunning = 0;
 	var CompilerProcess = null;
 	Provider
@@ -15,9 +14,16 @@ var compilerServer = function(Provider, root, cwd, userData, authServer){
 			isRunning=1;
 			var dirname = path.resolve(path.join(root, data['dirname']));
 			var filename = data['filename'];
-			CompilerProcess =  new COMPILER_CONSTRUCTOR
+			var extension = filename.split(".");
+			var compiler_const = compiler.findPackageFor(extension[extension.length-1]);
+			if(compiler_const === false){
+				Provider.emit('cs_on', false);
+				isRunning = 0;
+				return false;
+			}
+			CompilerProcess =  new compiler_const
 			(function(success){
-				isRunning=2;
+				isRunning = success?2:0;
 				Provider.emit('cs_on', success);
 			}, cwd, userData, dirname, filename);
 			

@@ -22,7 +22,7 @@ $(function(){
 
 		client.CompilerServerClient.runFile(dirName, fileName, function(success){
 			if(success == false){
-				div.terminal.echo("[FATAL] Server side error");	
+				div.terminal.echo("[FATAL] Server side error. Make sure the filetype is supported. ");	
 			} else {
 				running = true;
 				div.click();	

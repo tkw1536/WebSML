@@ -40,7 +40,7 @@ function Compiler(callback, cwd, userData, dirname, filename)
 		this.compilerArgs = Compiler.EmptyArguments;
 
 		if(typeof dirname == 'string' && typeof filename == 'string'){
-			this.compilerArgs = Compiler.PreFileNameArgs.concat([path.resolve(path.join(dirname, filename))], Compiler.PostFileNameArgs);
+			this.compilerArgs = this.PreFileNameArgs.concat([path.resolve(path.join(dirname, filename))], this.PostFileNameArgs);
 		}
 	
 		this.runLevel = 2;
@@ -61,7 +61,7 @@ Compiler.prototype.start = function()
 	this.runLevel = 3;
 	//Start the process
 	this.process = spawn(
-		Compiler.Executable, 
+		this.Executable, 
 		this.compilerArgs,
 		{
 			'cwd': this.cwd
@@ -99,11 +99,5 @@ Compiler.Executable = "/bin/cat"; //Replace this by your executable
 Compiler.PreFileNameArgs = []; //Arguments prior to file name
 Compiler.PostFileNameArgs = []; //Arguments after file name
 Compiler.EmptyArguments = []; //Arguments for running compiler only. 
-Compiler.supportedFileExtensions = ['txt']; //Supported File Extensions
-
-
-Compiler.compilerName = "<Standard Process Compiler>"; 
-Compiler.compilerVersion = "<Insert Version here>";
-Compiler.compilerDescription = "<Insert Description here>";
 
 module.exports = Compiler;

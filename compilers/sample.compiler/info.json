@@ -1,0 +1,7 @@
+{
+	"name": "Sample Compiler",
+	"version": "1.0",
+	"description": "A sample compiler. ",
+	"supportedExtensions": ["txt"],
+	"stdProcess": true
+}

@@ -1,0 +1,60 @@
+The compiler system
+-------------------------
+The compiler system has been split into Compiler Packages. Each package looks like this: 
+
+* <Name>.compiler
+	* info.json
+	* compiler.js
+	* ... (Further files required by the compiler)
+
+An exmaple info.json file looks like this: 
+---------------
+{
+	"name": "Sample Compiler",
+	"version": "1.0",
+	"description": "A sample compiler. ",
+	"supportedExtensions": ["txt"],
+	"stdProcess": true
+}
+---------------
+name, version, description give the compiler name, version and a short description (as strings). 
+The last stdProcess
+supportedExtensions is an array of extension which are supported by the compiler. 
+The last option stdProcess is a boolean and can be used if the compielr works with standard input / output, see below. 
+
+The compiler.js has to export the following packages:
+
+* <function> (<function> callback(<boolean> success), <string> cwd, <userData> userData, [<string> dirname, <string> filename])
+	* initialiser
+	* cwd is the working directory of the compiler
+	* userData is information about the user. (undocumented as of yet). 
+	* if arguments not given, starts an empty compiler. 
+	* if arguments dirname && filename are given, runs the file in the given directory. 
+	* callback should be called once preparation is done, success should reflect if the process was successfull or not. 
+	* returns a new Compiler object. 
+* <function> start()
+	* starts the process if it is ready. (After callback)
+	* returns boolean indicating if it was successfull or not. 
+* <EventEmitter> Events: 
+	* <Event> stdErr({<string> data}): Raised when the compiler process writes to stderr
+	* <Event> stdOut({<string> data}): Raised when the compiler process writes to stderr
+	* <Event> exit({<int> code, <int> signal}): Raised when the compiler process ends with the specefied code / signal. 
+	* <EventHandler> stdIn(<string> data): Sends data to stdin of the compiler process. 
+	* <EventHandler> ctrlC(): Sends CTRL-C to the process
+	* <EventHandler> ctrlD(): Sends CTRL-D to the process (and ends it). 
+
+stdProcess
+----------
+If the compiler is a normal compielr which works via stderr / stderr than the option stdProcess can be called. Then the following function should be additionally defined in the compiler.js:
+
+* <function> __setup(<function> inheritFunction)
+	* 	is called before the compiler object is exported. The function inheritFunction (<obj> CompilerClass) is a function which takes exactly one argument (the compiler class) and adds the methods for a
+		normal compiler to it (as specefied above). Afterwards the following properties can be set: 
+		*	CompilerClass.Executable: Absolute path to the executable
+		*	CompilerClass.PreFileNameArgs: Arguments passed to executable before the filename
+		*	CompilerClass.PostFileNameArgs: Arguments passed to executable after the filename
+		*	CompilerClass.EmptyArguments: Arguments if the compiler is run without anything. 
+		
+
+All compilers can be specefied in the config file. 
+

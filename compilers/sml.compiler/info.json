@@ -1,0 +1,7 @@
+{
+	"name": "Standard ML of New Jersey",
+	"version": "v110.74",
+	"description": "Standard ML of New Jersey Compiler. ",
+	"supportedExtensions": ["sml"],
+	"stdProcess": true
+}

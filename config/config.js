@@ -8,7 +8,7 @@ var config = {
 		'port': 80, //port for server, default: 80
 		'provider': 'socketio' //Connection Provider to use
 	},
-	'mode': 'sml',//Mode (for different languages)
+	'modes': ['sml', 'node'],//Supported compiler(s)
 	'storage': {
 		'storageFolder': 'data/', //storage folder
 		'userDb': 'user.db'
