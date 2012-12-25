@@ -8,13 +8,16 @@ $(function(){
 		}
 		$("#ctrlc, #ctrld").parent().removeClass('ui-state-disabled');
 
-		var div = $("<div>").dterm(function(e){client.CompilerServerClient.stdIn(e); }, {"title": fileName+" ["+dirName+"] - Compiler", prompt: ">", greetings: null});
+		var div = $("<div>")
+		.dialog({"title": fileName+" ["+dirName+"] - Compiler", "width": 800, "height": 450, "autoEnable": false})
+
+		.webTerminal(function(e){client.CompilerServerClient.stdIn(e); }, {prompt: ">", greetings: null});
 
 		div.on('dialogclose', function(){
 			if(running){
 				client.CompilerServerClient.ctrlD();
 				running = false;
-				div.terminal.pause();
+				div.webTerminal("disable");
 			}
 			div.remove();
 			$("#ctrlc, #ctrld").parent().addClass('ui-state-disabled');
@@ -22,23 +25,23 @@ $(function(){
 
 		client.CompilerServerClient.runFile(dirName, fileName, function(success){
 			if(success == false){
-				div.terminal.echo("[FATAL] Server side error. Make sure the filetype is supported. ");	
+				div
+				.webTerminal("echo", "[FATAL] Server side error. Make sure the filetype is supported. ", function(){this.css("color", "red");})
+				.webTerminal("disable");
 			} else {
 				running = true;
-				div.click();	
+				div.webTerminal("enable");	
 			}
 		}, function(stdOut){
-			div.terminal.echo(stdOut);
+			div.webTerminal("echo", stdOut);
 		}, function(stdErr){
 			
 		}, function(endCode){
 			//Terminal ended
-			div.terminal.echo("Process terminated with code " +endCode['code']);
+			div.webTerminal("echo", "Process terminated with code " +endCode['code']);
+			div.webTerminal("disable");
 			running = false;
 		});
-		
-		div.on('focusout', function(){div.terminal.pause();});	
-		div.on('focusin', function(){if(running){div.terminal.resume();}});	
 		
 	}
 

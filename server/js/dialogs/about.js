@@ -20,7 +20,6 @@ jQuery(function(){
 		["jQuery UI", "http://jqueryui.com", "1.9.2", "MIT License", "http://jquery.org/license/"],
 		["jQuery Hotkeys Plugin", "https://github.com/jeresig/jquery.hotkeys", "Commit 49", "MIT License", "https://raw.github.com/jeresig/jquery.hotkeys/master/jquery.hotkeys.js"],
 		["jquery-dialogextend", "http://code.google.com/p/jquery-dialogextend/", "1.0.1", "MIT License", "http://www.opensource.org/licenses/mit-license.php"],
-		["JQuery Terminal Emulator plugin", "http://terminal.jcubic.pl", "0.4.22", "MIT License", "http://terminal.jcubic.pl/#license"],
 		["Socket.IO", "https://github.com/LearnBoost/socket.io/", "0.9.10", "MIT License", "https://raw.github.com/LearnBoost/socket.io/master/LICENSE"]
 		
 	];
