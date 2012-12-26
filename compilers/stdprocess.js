@@ -1,4 +1,5 @@
 var lib = require("./../lib/misc"),
+which = require("./../lib/which").sync,
 spawn = require('child_process').spawn,
 path = require("path"),
 fs = require("fs"),
@@ -61,7 +62,7 @@ Compiler.prototype.start = function()
 	this.runLevel = 3;
 	//Start the process
 	this.process = spawn(
-		this.Executable, 
+		which(this.Executable), 
 		this.compilerArgs,
 		{
 			'cwd': this.cwd

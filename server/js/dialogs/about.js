@@ -18,7 +18,7 @@ jQuery(function(){
 		["nodejs", "http://nodejs.org/", "0.8.15", "Node's license", "https://raw.github.com/joyent/node/v0.8.15/LICENSE"],
 		["jQuery", "http://jquery.com/", "1.8.3", "MIT License", "http://jquery.org/license/"],
 		["jQuery UI", "http://jqueryui.com", "1.9.2", "MIT License", "http://jquery.org/license/"],
-		["jQuery Hotkeys Plugin", "https://github.com/jeresig/jquery.hotkeys", "Commit 49", "MIT License", "https://raw.github.com/jeresig/jquery.hotkeys/master/jquery.hotkeys.js"],
+		["node-which", "https://github.com/isaacs/node-which", "1.0.5", "Unknown License", "https://raw.github.com/isaacs/node-which/master/LICENSE"],
 		["jquery-dialogextend", "http://code.google.com/p/jquery-dialogextend/", "1.0.1", "MIT License", "http://www.opensource.org/licenses/mit-license.php"],
 		["Socket.IO", "https://github.com/LearnBoost/socket.io/", "0.9.10", "MIT License", "https://raw.github.com/LearnBoost/socket.io/master/LICENSE"]
 		

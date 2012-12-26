@@ -6,7 +6,8 @@
 			'onEval': function(){},
 			'autoEnable': true,
 			'autoFocus': true,
-			'maxHistory': 0 //-1 => disabled, 0 = infinite, # => number
+			'maxHistory': 0, //-1 => disabled, 0 = infinite, # => number
+			'otherKey': function(){}
 		}, options);
 		if(typeof onEval == 'function'){
 			options.onEval = onEval;		
@@ -73,9 +74,11 @@
 			} else if(e.keyCode == 40){//down
 				upDateHistoryIndex(1);
 				return false;
+			} else if(e.keyCode != 13){
+				options.otherKey.call(this, e, this);
+				return true;
 			}
 		});
-
 		$me.data("jqterm_contenttd", $contentTd);
 
 		var $form = $("<form>")
@@ -91,7 +94,6 @@
 					e
 					.append(options.prompt, "&nbsp;", $("<div style='display:inline'>")
 					.text(val));
-					$me.scrollTop($me.get(0).scrollHeight);
 				});
 				try{
 					options.onEval.call($me, val, $me);
@@ -150,6 +152,7 @@
 		if(options.autoFocus){
 			$me.click(function(){
 				$input.focus();
+				$me.scrollTop($me.get(0).scrollHeight);
 			}).click();	
 		}
 	};
@@ -161,6 +164,7 @@
 	var terminal_enable = function($me){
 		$me.find("ftr :last").show();
 		$me.webTerminal('focus');
+		$me.scrollTop($me.get(0).scrollHeight);
 	};
 
 	var terminal_echo = function($me, content, callback){
@@ -179,7 +183,7 @@
 		if(typeof callback == 'function'){
 			callback.call(elem, elem, $me);		
 		}
-		window.setTimeout(function(){$me.scrollTop($me.get(0).scrollHeight);}, 1000);
+		$me.scrollTop($me.get(0).scrollHeight);
 	};
 
 	var terminal_clear = function($me){

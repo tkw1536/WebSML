@@ -11,7 +11,7 @@ $(function(){
 		var div = $("<div>")
 		.dialog({"title": fileName+" ["+dirName+"] - Compiler", "width": 800, "height": 450, "autoEnable": false})
 
-		.webTerminal(function(e){client.CompilerServerClient.stdIn(e); }, {prompt: ">", greetings: null});
+		.webTerminal(function(e){client.CompilerServerClient.stdIn(e); }, {prompt: ">", greetings: null, otherKey: function(e){$(document).trigger("keydown", e);div.click();}});
 
 		div.on('dialogclose', function(){
 			if(running){
@@ -38,7 +38,18 @@ $(function(){
 			
 		}, function(endCode){
 			//Terminal ended
-			div.webTerminal("echo", "Process terminated with code " +endCode['code']);
+			div.webTerminal("echo", "", function(e){
+				var color = 'white';
+				if(endCode['code'] == 0){
+					color = 'green';
+				} else if(endCode['code'] == 1){
+					color = 'red';
+				} else if(endCode['code'] == 127){
+					color = 'yellow';
+				}
+				e.append("Process terminated with code ", $("<b>").text(endCode['code']).css("color", color));
+				e.append(endCode.code == 127?" (executable not found on server)":"");
+			});
 			div.webTerminal("disable");
 			running = false;
 		});
