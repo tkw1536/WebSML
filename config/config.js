@@ -1,6 +1,10 @@
 //General Configuration file for WebSML
+var DB = require("./../lib/db"),
+path = require("path");
 
-var config = {
+var db = new DB(path.join(__dirname, "../data"));
+
+db.openBase("config", {//Default Settings can be changed via admin panel
 	
 	//server config
 	'server': 
@@ -9,13 +13,15 @@ var config = {
 		'provider': 'socketio' //Connection Provider to use
 	},
 	'modes': ['sml', 'node'],//Supported compiler(s)
-	'storage': {
-		'storageFolder': 'data/', //storage folder
-		'userDb': 'user.db'
+	'accessData':
+	{
+		'admin': {'username': 'admin', 'password': 'pleasechange'},
+		'rpc': {'username': 'rpc', 'password': 'pleasechange'}
 	}
-	
-	
-}
+});
+
+db.writeCache("config");
 
 
-module.exports = config;
+module.exports = db.getAllFromBase("config");
+module.exports.db = db;

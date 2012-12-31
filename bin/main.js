@@ -6,12 +6,16 @@ var worker;
 var messageHandler = function(m){
 	if(m==='restart'){
 		restart();
+	} else if(m==='stop'){
+		console.log("Stopping Server ....");
+		worker.kill('SIGTERM');
+		process.exit(0);
 	}
 };
 
 var restart = function(w){
 	console.log("Restarting Server ....");
-	worker.send('exit_gracefully');
+	worker.kill('SIGTERM');
 	workerLoop();
 };
 
@@ -22,7 +26,14 @@ var workerLoop = function(){
 
 process.once('SIGINT', function(){
 	console.log("Caught SIGINT, shutting down ...");
-	worker.send('exit_gracefully');
+	worker.kill('SIGTERM');
+	process.exit(0);
+});
+
+process.once('SIGTERM', function(){
+	console.log("Caught SIGTERM, shutting down ...");
+	worker.kill('SIGTERM');
+	process.exit(0);
 });
 
 workerLoop();

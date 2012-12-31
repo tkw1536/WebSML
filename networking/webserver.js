@@ -9,7 +9,7 @@ EventEmitter = require('events').EventEmitter
 extend = lib.extend;
 
 var RequestUrl = function(req){
-	return lib.defineIfNull(url.parse(req.url).pathname, "");
+	return req.RequestParams.url;
 };
 
 var EventFwd = function(source, dest, evts){
@@ -55,6 +55,52 @@ var ObjForwardAll = function(source, dest){
 	return dest;
 };
 
+var WrapRequest = function(req, force){
+	if(!force && req._wrapped){
+		return req;
+	}
+	var cookies = {};
+	req.headers = lib.defineIfNull(req.headers, {});
+	if(req.headers.cookie){
+		req.headers.cookie.split(';').forEach(function( cookie ) {
+		var parts = cookie.split('=');
+			cookies[ parts[ 0 ].trim() ] = ( parts[ 1 ] || '' ).trim();
+		});	
+	}
+	var authHeaders;
+	if(req.headers['authorization']){
+		var auth = req.headers['authorization'];
+		var tmp = auth.split(' ');
+		var buf = new Buffer(tmp[1], 'base64'); // create a buffer and tell it the data coming in is base64
+		var plain_auth = buf.toString();
+		var creds = plain_auth.split(':');
+		authHeaders = {"username":creds[0], "password":creds[1]};
+		if(auth == '' || plain_auth == ':'){
+			authHeaders = false;	
+		}
+	} else {
+		authHeaders = false;
+	}
+	var parsedUrl = url.parse(req.url, true);
+	req.RequestParams = {
+		"origin": lib.defineIfNull(req.headers['referer'], ""),
+		"url": lib.defineIfNull(parsedUrl.pathname, ""),
+		"getParams": lib.defineIfNull(parsedUrl.query, {}),
+		"cookies": cookies,
+		"auth": authHeaders
+	};
+	req._wrapped = true;
+	return req;
+};
+
+
+var WrapResponse = function(res, force){
+	if(!force && res._wrapped){
+		return res;
+	}
+	res._wrapped = true;
+	return res;
+};
 
 
 var WebServer = function(servers, port){
@@ -65,13 +111,20 @@ var WebServer = function(servers, port){
 	return http.createServer(server).listen(port);
 }
 
+WebServer.wrap = function(data){
+	if(data._wrapped){return data;}//No double wrapping
+	var ret = function(req, res){return data(WrapRequest(req), WrapResponse(res));};
+	ret._wrapped = true;
+	return ret;
+};
+
 WebServer.make = function(servers, fallback){//
 	if(typeof fallback != 'function'){
 		fallback = function(req, res){
 			return false;
 		};	
 	}
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		var done = false;
 		for(var i=0;i<servers.length;i++){
 			if(servers[i](req, res) === true){
@@ -80,25 +133,25 @@ WebServer.make = function(servers, fallback){//
 			}
 		}
 		if(!done){return fallback(req, res);} else {return true;}
-	};
+	});
 }
 
 
 WebServer.subServer = function(requestRoot, data){
 	var requestRoot = lib.defineIfNull(url.parse(requestRoot).pathname, "");
 	requestRoot = lib.startsWith(requestRoot, '/')?requestRoot:'/'+requestRoot;
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		if(lib.isIn(RequestUrl(req), requestRoot)){//Are we in  the root
 			var req2 = new EventEmitter();
 			EventFwd(req, req2, ['data', 'end', 'close']);
-			ObjectFwd(req, req2, ['method', 'setEncoding']);
+			ObjectFwd(req, req2, ['method', 'setEncoding', 'headers']);
 			var reqUrl = url.parse(req.url)
 			reqUrl.pathname = path.relative(requestRoot, lib.defineIfNull(reqUrl.pathname, ""));
 			req2.url = url.format(reqUrl);
 			req2.url = lib.startsWith(req2.url, '/')?req2.url:'/'+req2.url;
-			return data(req2, res);
+			return data(WrapRequest(req2), res);
 		} else {return false;}
-	};
+	});
 };
 
 WebServer.staticServer = function(root, options){
@@ -128,7 +181,7 @@ WebServer.staticServer = function(root, options){
 		"css": "text/css"
 	}, options.mimeTypes);
 
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		var uri = RequestUrl(req);
 		uri = lib.endsWith(uri, "/")?uri+index:uri;//Directory index files
 		var filename = path.resolve(path.join(root, uri));//resolve absolute filename
@@ -151,65 +204,72 @@ WebServer.staticServer = function(root, options){
 			fileStream.pipe(res);
 		});
 		return true;
-	};
+	});
 };
 
 WebServer.staticRequest = function(pth, data){
 	var pth = lib.defineIfNull(url.parse(pth).pathname, "");
 	pth = lib.startsWith(pth, '/')?pth:'/'+pth;
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		if(RequestUrl(req) == pth){
 			data(req, res);
 			return true;
 		} else {return false;}
-	};
+	});
 };
 
 WebServer.filteredServer = function(filter, data){
 	var filterFunc = (typeof filter != 'function')?filter:function(req){return filter.indexOf(req)!=-1;};
 
-	return function(req, res){
-		if(filterFunc(RequestUrl(req))){
+	return WebServer.wrap(function(req, res){
+		if(filterFunc(RequestUrl(req), req)){
 			data(req, res);
 			return true;
 		} else {
 			return false;
 		}
-	};
+	});
 	
 };
 
 WebServer.echoServer = function(){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		res.writeHead(200, {'Content-Type': 'text/plain'});
 		res.write(require("util").inspect(req));
 		res.end();
 		return true;
-	};
+	});
 };
 
 WebServer.passive = function(PassiveFunction){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		var url = RequestUrl(req)
 		PassiveFunction(lib.startsWith(url, '/')?url:'/'+url, req);
 		return false;
-	};
+	});
+};
+
+WebServer.ignore = function(PassiveFunction){
+	return WebServer.wrap(function(req, res){
+		PassiveFunction(req, res);
+		return false;
+	});
 };
 
 WebServer.always = function(server){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		server(req, res);
 		return true;
-	};
+	});
 };
 
 WebServer.nullServer = function(status){
 	var status = typeof status=='number'?status:200;
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		res.writeHead(status, {'Content-Type': 'text/plain'});
 		res.end();
 		return true;
-	};
+	});
 }
 
 WebServer.file = function(file, mimeType, status){
@@ -226,7 +286,7 @@ WebServer.file = function(file, mimeType, status){
 		status = 200;
 	}
 
-	return WebServer.fallBack(
+	return WebServer.wrap(WebServer.fallBack(
 		function(req, res){
 			res.writeHead(status, {'Content-Type': mimeType});
 			var fileStream = fs.createReadStream(path.resolve(file));//pump to the client
@@ -236,17 +296,17 @@ WebServer.file = function(file, mimeType, status){
 		function(req, res){
 			return false;		
 		}
-	);
+	));
 };
 
 WebServer.fallBack = function(func1, func2){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		try{
 			return func1(req, res);
 		} catch(e){
 			return func2(req, res, e);		
 		}
-	};
+	});
 };
 
 WebServer.textServer = function(text, mimeType, status){
@@ -264,19 +324,19 @@ WebServer.textServer = function(text, mimeType, status){
 	}
 
 	var TextFunction = (typeof text == 'function')?text:function(){return text;};
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		res.writeHead(status, {'Content-Type': mimeType});
 		res.write(TextFunction(RequestUrl(req)));
 		res.end();
 		return true;
-	};
+	});
 }
 
 WebServer.otherServer = function(server){//forward to another http server instance, which does not have to be listening
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		server.emit("request", req, res);
 		return true;
-	};
+	});
 };
 
 WebServer.post = function(data){
@@ -290,13 +350,13 @@ WebServer.post = function(data){
 }
 
 WebServer.get = function(data){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		if(req.method == 'GET'){
 			return data(req, res);
 		} else {
 			return false;		
 		}
-	};
+	});
 }
 
 WebServer.forceHead = function(status, headers, expandable, otherResponse){
@@ -304,37 +364,51 @@ WebServer.forceHead = function(status, headers, expandable, otherResponse){
 	var headerFunc = (typeof headers=='function')?headers:function(){return headers;};
 	var expandable = expandable?true:false;	
 	var otherResponse = (typeof otherResponse=='function')?otherResponse:WebServer.nullServer();
-	return function(req, res){
-		var res2 = new EventEmitter();
+	return WebServer.wrap(function(req, res){
+		var orgHead = res.writeHead;
 		var reqUrl = RequestUrl(req);
-		var reqStatus = statusFunc(reqUrl);
-		var reqHead = headerFunc(reqUrl);
-		EventFwd(res, res2, ['close']);
-		ObjectFwd(res, res2, ['writeHead', 'statusCode', 'setHeader', 'sendDate', 'getHeader', 'removeHeader', 'write', 'addTrailers', 'end']);
+		var reqStatus = statusFunc(reqUrl, req);
+		var reqHead = headerFunc(reqUrl, req);
 		if(expandable){
-			res2.writeHead = function(stat, headers){
-				return res.writeHead(reqStatus, ObjForwardAll(headers, reqHead));
+			res.writeHead = function(stat, headers){
+				return orgHead.call(res, reqStatus, ObjForwardAll(headers, reqHead));
 			}; 		
 		} else {
-			res2.writeHead = function(stat, head){
-				return res.writeHead(reqStatus, reqHead);
+			res.writeHead = function(stat, head){
+				return orgHead.call(res, reqStatus, reqHead);
 			}; 		
 		}
-
-		return otherResponse(req, res2);
+		return otherResponse(req, res);
 		
-	};
+	});
 };
 
 WebServer.forward = function(to, otherResponse){
 	var ToFunc = (typeof to=='function')?to:function(){return to;};
-	return WebServer.forceHead(302, function(req){return {'Location': ToFunc(req)};}, true, otherResponse);
+	return WebServer.wrap(WebServer.forceHead(302, function(req){return {'Location': ToFunc(req)};}, true, otherResponse));
 };
 
 WebServer.parsedUrl = function(data, parseQueryString, slashesDenoteHost){
-	return function(req, res){
+	return WebServer.wrap(function(req, res){
 		return data(req, res, url.parse(req.url, parseQueryString, slashesDenoteHost))
-	};
+	});
 }
 
+WebServer.basicAuth = function(realmName, authHandler, data, dataUnauthed){
+	var dataUnauthed = (typeof dataUnauthed == 'function')?dataUnauthed:WebServer.textServer('HTTP 401 Unautharised');
+	var unAuthorised = WebServer.forceHead(401, {"WWW-Authenticate": 'Basic realm="'+realmName+'"'}, true, dataUnauthed);
+	return WebServer.wrap(function(req, res){
+		var authData = req.RequestParams.auth;
+		if(authData !== false){
+			if(authHandler(authData["username"], authData["password"])){
+				data(req, res);
+			} else {
+				unAuthorised(req, res);
+			}
+		} else {
+			unAuthorised(req, res);
+		}
+		return true;
+	});
+};
 module.exports = WebServer;
