@@ -1,39 +1,23 @@
 var auth = require("./auth");
 
-var authServer = function(Provider, onAuth){
+var authServer = function(Provider, onAuth, onAdminAuth){
 	Provider.new_client(
 		function(socket)
 			{
 				socket
-				.on('makeCredentials', function(data){
+				.on('auth_request', function(data){
 					try{
-						var authObj = auth.makeCredentials(data['user'], data['pass'], function(authObj, err){
-							if(err){
-								socket.emit('credentialsStatus', {'success': false});
+						var request = new auth.request(data['role'], data['data']);
+						socket.emit('auth_request', {'success': request.success});
+						if(request.success){
+							if(request.role == 'admin'){
+								onAdminAuth(socket, request.credentials)
 							} else {
-								socket.emit('credentialsStatus', {'success': true, 'authObj': authObj});
+								onAuth(socket, request.credentials, request.userData)
 							}
-						});
-					} catch(e){
-						socket.emit('credentialsStatus', {'success': false});
-					}
-				}).on('auth', function(data){
-					try{
-						var cred = data['credentials'];
-						auth.validCredentials(cred, function(valid){
-							auth.getUserData(cred, function(userData){
-								socket.emit('authStatus', {'success': valid});
-								onAuth(socket, cred, userData);
-							});
-							
-						});
-						
-						
-					} catch(e){
-						socket.emit('authStatus', {'success': false});
-					}
-				})
-				.emit('serverReady');
+						}
+					} catch(e){}
+				});
 			}	
 	);
 	return auth;

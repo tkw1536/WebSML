@@ -4,8 +4,8 @@ config = require("./../config/config"),
 WebServer = require("./../networking/webserver"),
 provider = require("./../networking/provider"),
 authServer = require("./../auth/AuthServer"),
-admin = require("./../auth/admin"),
-rpc = require("./../auth/rpc")
+admin = require("./../rpc/admin"),
+rpc = require("./../rpc/rpc")
 FileServer = require("./FileServer"),
 CompilerServer = require("./../compilers/compilerServer");
 
@@ -27,7 +27,8 @@ var authServer = authServer(provider,
 	function(socket, cred, userData){
 		var fs = new FileServer(socket, {'root': userData['HomeFolder']});
 		var cs = new CompilerServer(socket, userData['HomeFolder'], userData['HomeFolder'], authServer);
-	}
+	},
+	admin.services
 );
 
 process.once('SIGTERM', function(){

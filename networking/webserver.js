@@ -30,8 +30,9 @@ var ObjectFwd = function(source, dest, keys){
 	for(var i=0;i<keys.length;i++){
 		var key = keys[i];
 		if(typeof source[key] == 'function'){
+			var orgFunction = source[key];
 			dest[key] = function(){
-				return source[key].apply(source, arguments);
+				return orgFunction.apply(source, arguments);
 			};
 		} else {
 			dest[key] = source[key];
@@ -44,8 +45,9 @@ var ObjForwardAll = function(source, dest){
 	for(var key in source){
 		if(source.hasOwnProperty(key)){
 			if(typeof source[key] == 'function'){
+				var orgFunction = source[key];
 				dest[key] = function(){
-					return source[key].apply(source, arguments);
+					return orgFunction.apply(source, arguments);
 				};
 			} else {
 				dest[key] = source[key];
@@ -142,14 +144,12 @@ WebServer.subServer = function(requestRoot, data){
 	requestRoot = lib.startsWith(requestRoot, '/')?requestRoot:'/'+requestRoot;
 	return WebServer.wrap(function(req, res){
 		if(lib.isIn(RequestUrl(req), requestRoot)){//Are we in  the root
-			var req2 = new EventEmitter();
-			EventFwd(req, req2, ['data', 'end', 'close']);
-			ObjectFwd(req, req2, ['method', 'setEncoding', 'headers']);
 			var reqUrl = url.parse(req.url)
-			reqUrl.pathname = path.relative(requestRoot, lib.defineIfNull(reqUrl.pathname, ""));
-			req2.url = url.format(reqUrl);
-			req2.url = lib.startsWith(req2.url, '/')?req2.url:'/'+req2.url;
-			return data(WrapRequest(req2), res);
+			reqUrl = path.relative(requestRoot, lib.defineIfNull(reqUrl.pathname, ""));
+			reqUrl = url.format(reqUrl);
+			reqUrl = lib.startsWith(reqUrl, '/')?reqUrl:'/'+reqUrl;
+			req.url = reqUrl;
+			return data(WrapRequest(req, true), res);
 		} else {return false;}
 	});
 };
@@ -326,7 +326,7 @@ WebServer.textServer = function(text, mimeType, status){
 	var TextFunction = (typeof text == 'function')?text:function(){return text;};
 	return WebServer.wrap(function(req, res){
 		res.writeHead(status, {'Content-Type': mimeType});
-		res.write(TextFunction(RequestUrl(req)));
+		res.write(TextFunction(RequestUrl(req), req));
 		res.end();
 		return true;
 	});
@@ -410,5 +410,13 @@ WebServer.basicAuth = function(realmName, authHandler, data, dataUnauthed){
 		}
 		return true;
 	});
+};
+
+WebServer.provideJS = function(variableName, data){
+	var dataFunc = (typeof data == 'function')?data:function(){return data;};
+	return WebServer.textServer(function(url, req){
+		return "var "+variableName+" = "+JSON.stringify(dataFunc(url, req))+";";
+		
+	}, "text/javascript", 200);
 };
 module.exports = WebServer;
