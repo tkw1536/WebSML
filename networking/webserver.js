@@ -237,7 +237,8 @@ var MakeDataObj = function(req, res, dataObj, options){
 				"options": {
 					"path": path,
 					"domain": domain,
-					"expires": expires
+					"expires": expires,
+					"noSend": false
 				}
 			};
 		}
@@ -254,7 +255,7 @@ var MakeDataObj = function(req, res, dataObj, options){
 					"name":name, 
 					"value": JSON.parse(unescape(value)), 
 					"options": {
-						"expires": -1//Do not refresh
+						"noSend": true
 					}
 				};
 			}
@@ -292,6 +293,9 @@ var MakeDataObj = function(req, res, dataObj, options){
 		for(var key in cookies.all){
 			if(cookies.all.hasOwnProperty(key)){
 				var cookie = cookies.all[key];
+				if(cookie.options.noSend){
+					continue;				
+				}
 				var expiresDate = new Date(cookie.options.expires).toUTCString();
 				var cookieString = cookie.name+"="+escape(JSON.stringify(cookie.value))
 				if(cookie.options.expires != 0){
@@ -351,12 +355,14 @@ WebServer.make = function(server){//Makes a server from an array of servers
 	} else {
 		options = {};	
 	}
+
+	servers = servers.map(function(e){return WebServer.wrap(e, options);});
+
 	var madeServer = WebServer.wrap(function(req, res, dataObj){
 		var dataObj = dataObj;
 		var done = false;
 		for(var i=0;i<servers.length;i++){
-			var server = WebServer.wrap(servers[i], options);
-			if(server(req, res, dataObj) === true){
+			if(servers[i](req, res, dataObj) === true){
 				done = true;
 				break;			
 			}
@@ -608,15 +614,25 @@ WebServer.provideJS = function(variableName, data){//provide some js
 	}, "text/javascript", 200);
 };
 
-WebServer.session = function(init, expires, prefix, data){//Make simple session which keep their value
-	if(typeof prefix != "undefined"){
-		data = prefix;
-		prefix = "";
-	}
+WebServer.ifServer = function(cond, trueData, falseData){//Is condition true?
+	var cond = lib.makeFunction(cond);
+	var trueData = WebServer.make(trueData);
+	var falseData = WebServer.make(falseData);
+	return WebServer.wrap(function(req, res, data){
+		if(cond(req, data)){
+			return trueData(req, res, data);
+		} else {
+			return falseData(req, res, data);
+		}
+	});
+};
+
+WebServer.session = function(init, expires, sessions, data){//Make simple session which keep their value
+
 	var expires = (typeof expires == 'number')?expires:60*60*1000;
 	var init = lib.makeFunction(init);
 	var data = WebServer.make(data);
-	var sessions = {};
+	var sessions = lib.defineIfNull(sessions, {});
 	var random = function(){return Math.random().toString().split(".")[1];}
 	var makeKey = function(){
 		var now = (new Date()).getTime().toString();
@@ -645,7 +661,7 @@ WebServer.session = function(init, expires, prefix, data){//Make simple session 
 	}
 	
 	return WebServer.wrap(function(req, res, dataObj){
-		var mySession = getSession(dataObj.cookies(prefix+"sessionId"));
+		var mySession = getSession(dataObj.cookies("sessionId"));
 		if(mySession == false){
 			mySession = {
 				"key": makeKey(),
@@ -655,7 +671,7 @@ WebServer.session = function(init, expires, prefix, data){//Make simple session 
 		mySession.lastAccess = (new Date()).getTime();
 		var myKey = mySession.key;
 		sessions[myKey] = mySession;
-		dataObj.cookies(prefix+"sessionId", mySession.key, expires);
+		dataObj.cookies("sessionId", mySession.key, expires);
 		dataObj.session = {
 			"key": mySession.key,
 			"value": mySession.value,
@@ -671,6 +687,56 @@ WebServer.session = function(init, expires, prefix, data){//Make simple session 
 		return result;
 		
 	});
+};
+
+WebServer.pathLogin = function(validateKey, data, dataNoAuth, options){//A simple login via keys. Use /login/<key> to login; Use /logout to logout. Key is available as data.session.value;
+	var validateKey = lib.makeFunction(validateKey);
+	var data = WebServer.make(data);
+	var dataNoAuth = WebServer.make(dataNoAuth);
+	var options = 
+	lib.expandIfNot({
+		"loginBasePath": "/login",
+		"logoutBasePath": "/logout",
+		"overwriteSession": true,
+	}, lib.defineIfNull(options, {}));
+		
+	var sessionStore = {};
+
+	var tryExpire = function(req, res, data){try{data.session.expire(); }catch(e){}return false;};
+
+	return WebServer.session(false, undefined, sessionStore, 
+		[
+			WebServer.subServer(options.loginBasePath, 
+					[
+						options.overwriteSession?function(req, res, data){
+							var key = data.path;
+							data.session.value = validateKey(key)?key:false;
+							return false;
+						}:function(req, res, data){
+							var key = data.path;
+							if(data.session.value == false){
+								data.session.value = validateKey(key)?key:false;
+							}
+							return false;
+						},
+						WebServer.forward("../")			
+					]
+			),
+			WebServer.subServer(options.logoutBasePath, 
+				[
+					tryExpire,
+					WebServer.forward("../")
+				]
+			),
+			WebServer.ifServer(
+				function(req, data){return data.session.value;},
+				data,//session is now available in this one
+				[
+					tryExpire,dataNoAuth
+				]
+			)
+		]
+	);
 }
 
 module.exports = WebServer;
