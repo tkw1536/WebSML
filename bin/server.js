@@ -11,15 +11,16 @@ CompilerServer = require("./../compilers/compilerServer");
 
 var provider_data = provider.getProvider(config.server.provider);//Get the provider
 
+console.log(provider_data[1]);
+
 //Make the webserver
-var server = WebServer([
+var server = WebServer(
 	WebServer.subServer('rpc', rpc),
-	WebServer.subServer('admin', admin), 
+	WebServer.subServer('admin', admin),
 	//Public Server
 	WebServer.staticRequest('js/clients/provider.js', WebServer.file(provider_data[1], "text/javascript", 200)),
-	WebServer.post(WebServer.textServer('', 200)),
 	WebServer.staticServer(__dirname+'/./../server')
-], config.server.port);
+).listen(config.server.port);
 
 var provider = new provider_data[0](server, config.server.port);
 
