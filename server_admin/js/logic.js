@@ -1,1 +1,1 @@
-$(action.runChained(['init'], function(){alert("ready");}));
+$(action.runChained(['init', 'menu', 'login', 'sessions']));

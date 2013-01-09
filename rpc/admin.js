@@ -7,10 +7,10 @@ var adminAuth = WebServer.basicAuth('Admin Page',
 	function(user, pass){
 		return (new auth.request('admin', {'username': user, 'password': pass})).success;
 	}, 
-	WebServer.make([
-		WebServer.staticRequest("js/auth_data.js", WebServer.provideJS("adminKeys", function(url, req){return req.RequestParams.auth;})),
+	[
+		WebServer.staticRequest("js/auth_data.js", WebServer.provideJS("adminKeys", function(req, data){return data.basicAuth;})),
 		WebServer.staticServer(__dirname+'/./../server_admin')
-	]), 
+	],
 	WebServer.textServer('Authorisation failure. ')
 )
 

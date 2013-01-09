@@ -2,7 +2,8 @@ var config = require("./../config/config"),
 auth = require("./../auth/auth"),
 WebServer = require("./../networking/webserver"),
 lib = require("./../lib/misc"),
-jayson = require('jayson');
+jayson = require('jayson'),
+session = require('./../auth/session');
 
 /*
 	JASON
@@ -18,22 +19,22 @@ var yason_wrapper = function(params, func, firstObj, thisObj){
 };
 
 var server = jayson.server({
-	echo: function() {//Echoes everything back
+	"test.echo": function() {//Echoes everything back
 		yason_wrapper(arguments, function(){
 			return arguments;
 		});
 	},
-	restart: function(){
+	"server.restart": function(){
 		yason_wrapper(arguments, function(t){
 			setTimeout(function(){process.send("restart");}, (typeof t=='number')?t:1000);return true;
 		});
 	},
-	stop: function(){
+	"server.stop": function(){
 		yason_wrapper(arguments, function(t){
 			setTimeout(function(){process.send("stop");}, (typeof t=='number')?t:1000);return true;
 		});
 	},
-	passwd: function(){
+	"config.credentials": function(){
 		yason_wrapper(arguments, function(identity, user, pass){//Change user name and pass, requires restart
 			if(identity == 'admin'){
 				var old = config.db.readBaseKey('config', 'accessData');
@@ -50,15 +51,34 @@ var server = jayson.server({
 			}
 		});
 	},
-	"register_session": function(){
-		yason_wrapper(arguments, function(user, data){
-			return auth.session.register(user, data);
+	"session.hasActiveSession": function(){
+		yason_wrapper(arguments, function(user){
+			return session.hasActiveSession(user);
+		})
+	},
+	"session.register": function(){
+		yason_wrapper(arguments, function(user, cd, overwrite){
+			if((typeof overwrite=='boolean')?overwrite:false){
+				session.getAll().map(function(sessionItem){
+					if(sessionItem.data().user == user){
+						sessionItem.expire();
+					}
+				});
+			}
+			return session.register({"user": user, "data": {"cwd": cd}});
 		});
 	},
-	"expire_session": function(){
+	"session.expire": function(){
 		yason_wrapper(arguments, function(id){
-			return auth.session.expire(id);
+			return session.expire(id);
 		});
+	},
+	"session.list": function(){
+		yason_wrapper(arguments, function(){
+			return session.getAll().map(function(sessionItem){
+				return [sessionItem.key, sessionItem.assoc(), sessionItem.lastAccess, sessionItem.data()];
+			});
+		})
 	}
 });
 

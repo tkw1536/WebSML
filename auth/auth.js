@@ -1,10 +1,10 @@
 //Authorisation / Session Module
-config = require("./../config/config");
+var config = require("./../config/config"),
+session = require("./session");
+
 
 //session: 
 var db = config.db;
-
-db.openBase("session", {});
 
 var auth = {}
 auth.request = function(role, data){
@@ -39,26 +39,23 @@ auth.request.rpc = function(me, user, pass){
 };
 
 auth.request.client = function(me, id){
-	me.success = db.hasBaseKey("session", id);
-	if(me.success){
-		var data = db.readBaseKey("session", id);
-		
-		me.credentials = {
-			"username": data["user"]
+	try{
+		var ids = id.split(":");
+		me.success = session.validate(ids[0], ids[1]);
+		if(me.success){
+			var data = session.returnData(ids[0], ids[1]);
+			me.credentials = 
+			{
+				"username": data.user
+			};
+			me.userData = data.data;
+			me.userData.session = session.get(ids[0]);
 		};
-		me.userData = data["data"];
-	};
-};
-
-auth.session = {
-	"register": function(user, data){
-		//Assign an id and store it in the database
-		return db.writeBaseKey("session", undefined, {"user": user, "data": data});
-	},
-	"expire": function(id){
-		return db.deleteBaseKey("session", id);
+	} catch(e){
+		me.success = false;
 	}
 };
+
 
 
 module.exports = auth;

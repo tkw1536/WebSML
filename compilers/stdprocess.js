@@ -5,7 +5,7 @@ path = require("path"),
 fs = require("fs"),
 events = require("events");
 
-function Compiler(callback, cwd, userData, dirname, filename)
+function Compiler(callback, cwd, dirname, filename)
 {
 	try{
 		var me = this;

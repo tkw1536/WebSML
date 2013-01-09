@@ -31,15 +31,52 @@
 		<script type='text/javascript' src='/js/clients/AuthServer.js'></script>
 		<script type='text/javascript' src='/admin/js/clients/rpc.js'></script>
 
+		<!-- Dialogs -->
+		<script type='text/javascript' src='/js/dialogs/dialog.js'></script>
+		<script type='text/javascript' src='/js/dialogs/disconnect.js'></script>
+		<script type='text/javascript' src='/admin/js/dialogs/passwd.js'></script>
+		<script type='text/javascript' src='/js/dialogs/help.js'></script>
+		<script type='text/javascript' src='/js/dialogs/about.js'></script>
+		<script type='text/javascript' src='/admin/js/dialogs/new-session.js'></script>
+
 		<!-- Actions -->
 		<script type='text/javascript' src='/js/actions/action.js'></script>
-		<script type='text/javascript' src='/admin/js/actions/init.js'></script>
+		<script type='text/javascript' src='/js/actions/init.js'></script>
+		<script type='text/javascript' src='/admin/js/actions/login.js'></script>
+		<script type='text/javascript' src='/js/actions/menu.js'></script>
+		<script type='text/javascript' src='/admin/js/actions/sessions.js'></script>
+		
 
 		<!-- Main Client Logic -->
 		<script type='text/javascript' src='/admin/js/logic.js'></script>
 	</head>
 	<body>
-		Welcome admin, this is the admin page. Right now it does not do a lot. 
+		<div id='content'>
+			<!-- Begin Menu -->
+			<ul id="menubar" class="menubar-icons" style="display:none;">
+				<li>
+					<a href="#">File</a>
+					<ul>
+						<li class="ui-state-disabled"><a href="#" id='logout'>Logout<span>Alt+X</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">Sessions</a>
+					<ul>
+						<li><a href="#" id='update-sessions-now'>Update now<span>Alt+U</span></a></li>
+						<li><a href="#" id='session-register'>Register new<span>Ctrl+N</span></a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#">Help</a>
+					<ul>
+						<li><a href="#" id='help'>Help<span>F1</span></a></li>
+						<li><a href="#" id='about'>About<span>Alt+A</span></a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<div id='sessions' style="width: 100%; "></div>
 	</body>
 </html>
 <!-- Nice, someone actually reading source code. -->

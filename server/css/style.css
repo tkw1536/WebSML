@@ -86,6 +86,12 @@ div.fill{
 }
 
 /* JQuery UI Unclosable dialog */
-.noCloseDialog .ui-icon, .noCloseDialog .ui-dialog-titlebar-close{
+.noCloseDialog .ui-dialog-titlebar-close{
     display:none !important;
 }
+
+/* Modal Form */
+.modalForm label, .modalForm input { display:block; }
+.modalForm input {width: 95%;}
+.modalForm input.text { margin-bottom:12px; width:95%; padding: .4em; }
+.modalForm fieldset { padding:0; border:0; }

@@ -5,7 +5,7 @@ path = require("path");
 
 compiler.cachePackages(config.modes);
 
-var compilerServer = function(Provider, root, cwd, userData, authServer){
+var compilerServer = function(Provider, root, cwd, authServer){
 	var isRunning = 0;
 	var CompilerProcess = null;
 	Provider
@@ -25,7 +25,7 @@ var compilerServer = function(Provider, root, cwd, userData, authServer){
 			(function(success){
 				isRunning = success?2:0;
 				Provider.emit('cs_on', success);
-			}, cwd, userData, dirname, filename);
+			}, cwd, dirname, filename);
 			
 			CompilerProcess.Events
 			.on('stdOut', function(str){Provider.emit('cs_stdout', str);})

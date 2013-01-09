@@ -105,7 +105,8 @@ var lib = {
 		var results = [];
 		var types = lib.defineIfNull(types, []);
 		var defaults = lib.defineIfNull(defaults, []);
-		var i = 0;		
+		var i = 0;
+		var j = 0;	
 		for(;i<types.length;i++){
 			if(args.length>i){
 				if(lib.isType(args[i], types[i])){
@@ -312,8 +313,15 @@ var MakeDataObj = function(req, res, dataObj, options){
 			}		
 		}
 		dataObj.responseHeaders['Set-Cookie'] = cookieJar;
-		var args = lib.makeArguments(arguments, ["number", "string", "*"], [200, "", {}]);
-		args[2] = lib.expand(dataObj.responseHeaders, args[2]);
+		var args = [statusCode];
+		if(typeof reasonPhrase == 'string'){
+			args.push(reasonPhrase);
+			args.push(lib.defineIfNull(headers, {}));
+		} else {
+			args.push("");
+			args.push(lib.defineIfNull(reasonPhrase, {}));
+		}
+		args[2] = lib.expandIfNot(args[2], dataObj.responseHeaders);
 		if(typeof dataObj.responseCode == 'number'){
 			args[0] = dataObj.responseCode;	
 		}
@@ -424,8 +432,10 @@ WebServer.staticServer = function(root, options){
 
 	return WebServer.wrap(function(req, res, dataObj){
 		var uri = dataObj.path;
-		uri = lib.endsWith(uri, "/")?uri+index:uri;//Directory index files
 		var filename = path.resolve(path.join(root, uri));//resolve absolute filename
+		if(lib.isDir(filename)){
+			filename = path.join(filename, options.indexFile);
+		}
 		if(!lib.isIn(filename, root)){//Access denied. We used a .. in the request
 			return 	options["401"](req, res, dataObj);	
 		}
@@ -490,11 +500,12 @@ WebServer.handled = function(data, fallback){//try ... [catch ...]
 	var data = WebServer.make(data);
 	var fallback = WebServer.make(fallback);
 	return WebServer.wrap(function(req, res, dataObj){
+		var res;
 		try{
 			return data(req, res, dataObj);	
 		} catch(e){
 			dataObj.errors.push(e);
-			return data(req, res, dataObj);	
+			return fallback(req, res, dataObj);	
 		}
 	});
 }
@@ -524,6 +535,10 @@ WebServer.file = function(file, mimeType, status){//Provide a file
 };
 
 WebServer.textServer = function(text, mimeType, status){//provide some text
+	if(typeof mimeType == 'number'){
+		mimeType = undefined;
+		status = mimeType;
+	}
 	mimeType = lib.defineIfNull(mimeType, "text/plain");
 	status = lib.defineIfNull(status, 200);
 	var text = lib.makeFunction(text),
@@ -703,19 +718,22 @@ WebServer.pathLogin = function(validateKey, data, dataNoAuth, options){//A simpl
 	var sessionStore = {};
 
 	var tryExpire = function(req, res, data){try{data.session.expire(); }catch(e){}return false;};
+	var makeKey = function(req, data){
+		var key = data.path.substring(1);
+		return validateKey(key)?key:false;
+		
+	};
 
 	return WebServer.session(false, undefined, sessionStore, 
 		[
 			WebServer.subServer(options.loginBasePath, 
 					[
 						options.overwriteSession?function(req, res, data){
-							var key = data.path;
-							data.session.value = validateKey(key)?key:false;
+							data.session.value = makeKey(req, data);
 							return false;
 						}:function(req, res, data){
-							var key = data.path;
 							if(data.session.value == false){
-								data.session.value = validateKey(key)?key:false;
+								data.session.value = makeKey(req, data);
 							}
 							return false;
 						},

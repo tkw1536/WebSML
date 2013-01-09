@@ -5,6 +5,6 @@ jQuery(function(){
 		dialog.confirm("Logout", "Are you sure you want to logout? \nAll unsaved changes will be discarded. ", 150, callback, function(){});
 	};
 	$("#logout").enabled_click(function(){
-		dialog.logout(function(){location.reload();});	
+		dialog.logout(function(){location.href='/logout';});	
 	});
 });
