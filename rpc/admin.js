@@ -15,12 +15,17 @@ var adminAuth = WebServer.basicAuth('Admin Page',
 )
 
 adminAuth.services = function(socket, rpcAuth){
+	process.send(['Session.Admin.Access']);
 	var rpc_client = new client("localhost", config.server.port, rpcAuth["username"], rpcAuth["password"]);
 	
 	socket.on('admin_rpc', function(data){
+		process.send(['Session.Admin.RPCRequest', data['method']]);
 		rpc_client(data['method'], data['args'], function(error, err, result){
 			socket.emit('admin_rpc', {'success': err?false:true, 'error': err, 'result': result});
 		});
+	});
+	socket.on('disconnect', function(){
+		process.send(['Session.Admin.Exit']);
 	});
 };
 

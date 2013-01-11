@@ -15,6 +15,13 @@ var authServer = function(Provider, onAuth, onAdminAuth){
 							} else {
 								onAuth(socket, request.credentials, request.userData)
 							}
+						} else {
+							if(request.role == 'admin'){
+								process.send(['Session.Admin.AuthenticationError', 'INVALID_CREDENTIALS']);		
+							} else {
+								process.send(['Session.AuthenticationError', 'INVALID_CREDENTIALS']);
+							}
+											
 						}
 					} catch(e){}
 				});

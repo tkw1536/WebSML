@@ -13,7 +13,6 @@ var Session = function(data){
 	this.Events = new EventEmitter();
 	var assoc = false;
 	this.key = newKey();
-
 	this.associate = function(key){
 		this.ping();
 		if(assoc!=false){return false;}

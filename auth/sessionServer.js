@@ -29,6 +29,7 @@ module.exports =
 							var sid = data.session.key;
 							session.associate(key, data.session.key);
 							data.session.value = key+":"+sid;
+							process.send(['Session.Activated', key]);
 						} else {
 							throw new Error("SESSION_ALREADY_ACTIVE");
 						}
@@ -41,6 +42,7 @@ module.exports =
 				WebServer.forward("/")
 			],
 			WebServer.textServer(function(req, data){
+				process.send(['Session.AuthenticationError', data.errors[0].message]);
 				return "Error: "+data.errors[0].message;
 			})
 		)

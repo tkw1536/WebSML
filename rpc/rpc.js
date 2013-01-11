@@ -65,7 +65,12 @@ var server = jayson.server({
 					}
 				});
 			}
-			return session.register({"user": user, "data": {"cwd": cd}});
+			var s = session.register({"user": user, "data": {"cwd": cd}});
+			process.send(['Session.Registered', s, user, cd]);
+			session.get(s).Events.on('kick', function(){
+				process.send(['Session.Expire', s]);
+			})
+			return s;
 		});
 	},
 	"session.expire": function(){
@@ -82,6 +87,8 @@ var server = jayson.server({
 	}
 });
 
+server.on('request', function(req){process.send(['Session.RPC.MethodCall', req.method]);});
+
 module.exports = WebServer.make([
 	WebServer.staticRequest('rpc_form', WebServer.file("./../rpc/client.html", "text/html", 200)),
 	WebServer.staticRequest('/', 
@@ -90,7 +97,7 @@ module.exports = WebServer.make([
 					return (new auth.request('rpc', {'username': user, 'password': pass})).success;
 				}, 
 				WebServer.otherServer(server.http()), 
-				WebServer.textServer('Authorisation failure. ')
+				[function(req, res, data){process.send(['Session.RPC.AuthenticationError', 'INVALID_CREDENTIALS']); return false;}, WebServer.textServer('Authorisation failure. ')]
 			)
 	),
 	WebServer.forward('/admin')

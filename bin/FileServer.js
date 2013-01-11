@@ -5,6 +5,7 @@ fs = require("fs");
 //TODO: continue adpating, implement canWrite
 
 var FileServer = function(Provider, options){
+	var ev = new (require('events').EventEmitter)();
 	var opts = lib.extend(
 	{
 		'root': './',//root
@@ -47,6 +48,7 @@ var FileServer = function(Provider, options){
 				if(!lib.sameDir(dir, root)){
 					dirs.unshift('..');//Directory up
 				}
+				ev.emit('listDir', dir);
 				Provider.emit('fs_listDir', {'dir': path.normalize(data['dir']), 'success': true, 'files': files, 'dirs': dirs});
 			} catch(e){
 				Provider.emit('fs_listDir', {'success': false});
@@ -63,6 +65,7 @@ var FileServer = function(Provider, options){
 			//read a file
 			try{
 				var content = fs.readFileSync(mypath, 'utf-8');
+				ev.emit('readFile', mypath);
 				Provider.emit('fs_readFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': true, 'content': content})			
 			} catch(e){
 				Provider.emit('fs_readFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': false});
@@ -83,6 +86,7 @@ var FileServer = function(Provider, options){
 			try{
 				if(overwrite==false && isFile(mypath)){throw "no overwrite";/*handled*/}
 				fs.writeFileSync(mypath, content, 'utf-8');
+				ev.emit('writeFile', mypath);
 				Provider.emit('fs_writeFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': true});
 			} catch(e){
 				Provider.emit('fs_writeFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': false});
@@ -100,6 +104,7 @@ var FileServer = function(Provider, options){
 			//make dir
 			try{
 				fs.mkdirSync(mypath, '0777');
+				ev.emit('makeDir', myPath);
 				Provider
 				.emit('fs_makeDir', {'dir': path.normalize(basedir), 'success': true});
 			} catch(e) {
@@ -116,6 +121,7 @@ var FileServer = function(Provider, options){
 		if(pathCheck(mypath)){
 			try{
 				fs.unlinkSync(mypath);
+				ev.emit('deleteFile', mypath);
 				Provider
 				.emit('fs_deleteFile', {'dir': path.normalize(basedir), 'filename': filename, 'success': true});
 			} catch(e){
@@ -134,6 +140,7 @@ var FileServer = function(Provider, options){
 					if(err){
 						Provider.emit('fs_deleteDir', {'dir': path.normalize(basedir), 'success': false});
 					} else {
+						ev.emit('deleteDir', path.normalize(basedir));
 						Provider.emit('fs_deleteDir', {'dir': path.normalize(basedir), 'success': true});
 					}
 				});
@@ -147,7 +154,7 @@ var FileServer = function(Provider, options){
 		}
 	});
 
-	this.close = function(){
+	ev.close = function(){
 		Provider
 		.off("fs_listDir")
 		.off("fs_readFile")
@@ -156,6 +163,7 @@ var FileServer = function(Provider, options){
 		.off("fs_deleteFile")
 		.off("fs_deleteDir");
 	};
+	return ev;
 };
 
 module.exports = FileServer;

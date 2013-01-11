@@ -7,6 +7,7 @@ compiler.cachePackages(config.modes);
 
 var compilerServer = function(Provider, root, cwd, authServer){
 	var isRunning = 0;
+	var ev = new (require('events').EventEmitter)();
 	var CompilerProcess = null;
 	Provider
 	.on('cs_on', function(data){
@@ -17,13 +18,15 @@ var compilerServer = function(Provider, root, cwd, authServer){
 			var extension = filename.split(".");
 			var compiler_const = compiler.findPackageFor(extension[extension.length-1]);
 			if(compiler_const === false){
-				Provider.emit('cs_on', false);
+				ev.emit('on', filename, false);
+				Provider.emit('cs_on', undefined, false);
 				isRunning = 0;
 				return false;
 			}
 			CompilerProcess =  new compiler_const
 			(function(success){
 				isRunning = success?2:0;
+				ev.emit('on', path.join(dirname, filename), success?true:false);
 				Provider.emit('cs_on', success);
 			}, cwd, dirname, filename);
 			
@@ -33,6 +36,7 @@ var compilerServer = function(Provider, root, cwd, authServer){
 			.on('exit', function(code){
 				CompilerProcess = null; 
 				isRunning = 0;
+				ev.emit('exit', path.join(dirname, filename), code);
 				Provider.emit('cs_exit', code);
 			});			
 		}
@@ -74,6 +78,7 @@ var compilerServer = function(Provider, root, cwd, authServer){
 			'value': val
 		});
 	});
+	return ev;
 };
 
 module.exports = compilerServer;
