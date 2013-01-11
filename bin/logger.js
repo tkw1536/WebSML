@@ -47,7 +47,7 @@ Log.flush = function(){
 	if(!fs.existsSync(logDir)){
 		fs.mkdirSync(logDir);
 	}
-	fs.appendFileSync(this.file, this.Events.map(Log.stringify).join("\n"), 'utf8');
+	fs.appendFileSync(this.file, "\n"+this.Events.map(Log.stringify).join("\n"), 'utf8');
 	this.lastFlush = now();
 	this.Events = [];
 };
@@ -62,6 +62,7 @@ process.on('message', function(m){
 			Log.log.apply(currentLog, m.slice(1));
 			process.send(m[1]);
 		}
+
 	}
 	
 });
