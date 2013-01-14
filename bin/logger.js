@@ -10,10 +10,10 @@ var now = function(){
 
 var Log = {};
 
-Log.create = function(logFile){
+Log.init = function(time){
 	this.Events = [];
-	this.lastFlush = now();
-	this.file = path.resolve(path.join(logDir, now().toString()+".log"));
+	this.lastFlush = time;
+	this.file = path.resolve(path.join(logDir, time.toString()+".log"));
 	return this;
 };
 
@@ -54,9 +54,10 @@ Log.flush = function(){
 
 process.on('message', function(m){
 	var target = m[0];
-	if(target == 'create'){
+	if(target == 'init'){
 		currentLog = {};
-		currentLog = Log.create.apply(currentLog, process.argv);
+		var logFileName = parseInt(process.argv[2]);
+		currentLog = Log.init.call(currentLog, logFileName);
 	} else if(target == 'log'){
 		if(typeof currentLog != "undefined"){
 			Log.log.apply(currentLog, m.slice(1));

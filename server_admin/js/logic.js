@@ -1,1 +1,1 @@
-$(action.runChained(['init', 'menu', 'login', 'sessions']));
+$(action.runChained(['init', 'menu', 'login', 'menu_server', 'sessions']));

@@ -2,6 +2,8 @@ var config = require("./../config/config"),
 auth = require("./../auth/auth"),
 WebServer = require("./../networking/webserver"),
 lib = require("./../lib/misc"),
+fs = require("fs"),
+path = require("path"),
 jayson = require('jayson'),
 session = require('./../auth/session');
 
@@ -11,11 +13,11 @@ session = require('./../auth/session');
 
 var yason_wrapper = function(params, func, firstObj, thisObj){
 	var args = [];
-	for(var i=0;i<params.length-1;i++){
+	for(var i=0;i<params.length;i++){
 		args.push(params[i]);
 	}
-	var callback = lib.lastMember(params);
-	callback(firstObj, func.apply(thisObj, params));
+	var callback = args.pop();
+	callback(firstObj, func.apply(thisObj, args));
 };
 
 var server = jayson.server({
@@ -84,6 +86,32 @@ var server = jayson.server({
 				return [sessionItem.key, sessionItem.assoc(), sessionItem.lastAccess, sessionItem.data()];
 			});
 		})
+	},
+	"logs.list": function(){
+		yason_wrapper(arguments, function(){
+			var logdir = path.join(__dirname, "/../logs/");
+			return fs.readdirSync(logdir).filter(function(e){
+				return fs.statSync(path.join(logdir, e)).isFile() && lib.endsWith(e, ".log");
+			}).map(function(e){
+				return e.split(".log")[0];
+			});
+		});
+	},
+	"logs.view": function(){
+		yason_wrapper(arguments, function(name){
+			var name = lib.defineIfNull(name, "").toString();
+			var file = path.join(__dirname, "/../logs/", name+".log");
+			try{
+				return fs.readFileSync(file, "utf8"); 
+			} catch(e){
+				return "";
+			}
+		});
+	},
+	"server.getSessionId": function(){
+		yason_wrapper(arguments, function(){
+			return parseInt(process.argv[2]);
+		});
 	}
 });
 

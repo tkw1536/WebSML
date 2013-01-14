@@ -5,11 +5,12 @@ var worker;
 var logger;
 var loggerEvents = new (require('events').EventEmitter)();
 var stayAlive = false;
+var START = (new Date()).getTime().toString();
 
 var workerLoop = function(){
 	stayAlive = false;
 	logger.send(['log', 'System.Start']);
-	worker = fork(join(__dirname, "server.js"));
+	worker = fork(join(__dirname, "server.js"), [START]);
 	worker.on('message', messageHandler);
 	worker.once('exit', function(){
 		logger.send(['log', 'System.Stop']);
@@ -63,8 +64,8 @@ var restart = function(w){
 };
 
 /* Logger */
-logger = fork(join(__dirname, "logger.js"));
-logger.send(['create', []]);
+logger = fork(join(__dirname, "logger.js"), [START]);
+logger.send(['init', []]);
 logger.on('message', function(m){
 	loggerEvents.emit(m);
 });

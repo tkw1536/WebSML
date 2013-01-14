@@ -30,22 +30,24 @@ action.sessions = function(){
 					$("<thead>").append($("<tr class='ui-widget-header'>").append("<td>ID</td><td>last Access</td><td>User</td><td>Working dir</td><td></td>"))				
 				);
 				for(var i=0;i<result.length;i++){
-					var res = result[i];
-					$table.append(
-						$("<tr>").append(
-							$("<td>").text(res[0]),
-							$("<td>").text((new Date(res[2])).toUTCString()),
-							$("<td>").text(res[3].user),
-							$("<td>").text(res[3].data.cwd),
-							$("<td>").append(
-								$("<button>").text("Remove").button().click(expire).data("SID", res[0]),
-								(res[1]?"":$("<button>").append($("<a>").text("Open").attr({
-									"href": "/session/"+res[0],
-									"target": "_blank"
-								})).button())
-							)
-						).css("background-color", (res[1]?"green":"yellow"))
-					);
+					try{
+						var res = result[i];
+						$table.append(
+							$("<tr>").append(
+								$("<td>").text(res[0]),
+								$("<td>").text((new Date(res[2])).toUTCString()),
+								$("<td>").text(res[3].user),
+								$("<td>").text(res[3].data.cwd),
+								$("<td>").append(
+									$("<button>").text("Remove").button().click(expire).data("SID", res[0]),
+									(res[1]?"":$("<button>").append($("<a>").text("Open").attr({
+										"href": "/session/"+res[0],
+										"target": "_blank"
+									})).button())
+								)
+							).css("background-color", (res[1]?"green":"yellow"))
+						);
+					} catch(e){}
 				}
 				$table.find("td").css("width", "20%");
 				window.setTimeout(function(){refreshLoop = false; toggle_refresh();}, refreshInterval);

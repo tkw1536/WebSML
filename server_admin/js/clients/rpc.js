@@ -1,4 +1,6 @@
 client.rpc = function(method, args, callback){
+	var args = (typeof args == 'undefined')? []:args;
+	var callback = (typeof callback == 'function')?callback:function(){};
 	client
 	.once('admin_rpc', function(data){
 		if(data['success']){

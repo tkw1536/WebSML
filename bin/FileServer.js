@@ -2,22 +2,22 @@ var lib = require("./../lib/misc"), //Lib
 path = require("path"),
 fs = require("fs");
 
-//TODO: continue adpating, implement canWrite
-
 var FileServer = function(Provider, options){
 	var ev = new (require('events').EventEmitter)();
 	var opts = lib.extend(
 	{
 		'root': './',//root
-		'outOfFolder': function(){},
-		//What should happen when we try something outside of our folder
+		'canRead': function(path, isDir){return true;},//Can we read a certain file?
+		'canWrite': function(path, isDir){return true;} //can we write a file?
 	}, options);
+
+	var canRead = (typeof opts.canRead == 'function')?opts.canRead:function(){return opts.canRead;};
+	var canWrite = (typeof opts.canWrite == 'function')?opts.canWrite:function(){return opts.canWrite;};
 	
 	var root = path.resolve(opts['root']);
 
 	var pathCheck = function(pth){
 		if(!lib.isIn(pth, root)){
-			opts['outOfFolder'](Provider, pth);
 			return false;		
 		}
 		return true;
@@ -36,15 +36,15 @@ var FileServer = function(Provider, options){
 	})
 	.on('fs_listDir', function(data){
 		var dir = path.join(root, data["dir"]);
-		if(pathCheck(dir)){
+		if(pathCheck(dir) && canRead(dir, true)){
 			try{
 				var everything = fs.readdirSync(dir);
 				var files = everything.filter(function(e, i, a){
 					return lib.isFile(path.join(dir, e)); 
-				});
+				}).filter(function(e){return canRead(path.join(dir, e), false);});
 				var dirs = everything.filter(function(e, i, a){
 					return lib.isDir(path.join(dir, e)); 
-				});
+				}).filter(function(e){return canRead(path.join(dir, e), true);});
 				if(!lib.sameDir(dir, root)){
 					dirs.unshift('..');//Directory up
 				}
@@ -61,7 +61,7 @@ var FileServer = function(Provider, options){
 		var basedir = data["dir"];
 		var filename = data["filename"];
 		var mypath = path.join(root, path.join(basedir, filename));
-		if(pathCheck(mypath)){
+		if(pathCheck(mypath)  && canRead(mypath, false)){
 			//read a file
 			try{
 				var content = fs.readFileSync(mypath, 'utf-8');
@@ -81,7 +81,7 @@ var FileServer = function(Provider, options){
 		var content = data["content"];
 		var overwrite = data["overwrite"];
 		var mypath = path.join(root, path.join(basedir, filename));
-		if(pathCheck(mypath)){
+		if(pathCheck(mypath) && canWrite(mypath, false)){
 			//write a file
 			try{
 				if(overwrite==false && isFile(mypath)){throw "no overwrite";/*handled*/}
@@ -100,7 +100,7 @@ var FileServer = function(Provider, options){
 		var newdir = data["newdir"];
 		//read all File in basedir
 		var mypath = path.join(root, path.join(basedir, newdir));
-		if(pathCheck(mypath)){
+		if(pathCheck(mypath) && canWrite(mypath, true)){
 			//make dir
 			try{
 				fs.mkdirSync(mypath, '0777');
@@ -118,7 +118,7 @@ var FileServer = function(Provider, options){
 		var basedir = data["dir"];
 		var filename = data["filename"];
 		var mypath = path.join(root, path.join(basedir, filename));
-		if(pathCheck(mypath)){
+		if(pathCheck(mypath) && canWrite(mypath, false)){
 			try{
 				fs.unlinkSync(mypath);
 				ev.emit('deleteFile', mypath);
@@ -134,7 +134,7 @@ var FileServer = function(Provider, options){
 	.on('fs_deleteDir', function(data){
 		var basedir = path.join(data["dir"], data['oldDir']);
 		var mypath = path.join(root, basedir);
-		if(pathCheck(mypath) && !lib.sameDir(mypath, root)){
+		if(pathCheck(mypath) && !lib.sameDir(mypath, root) && canWrite(mypath, true)){
 			try{
 				lib.removeRecursive(mypath, function(err){
 					if(err){

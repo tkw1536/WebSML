@@ -38,12 +38,15 @@
 		<script type='text/javascript' src='/js/dialogs/help.js'></script>
 		<script type='text/javascript' src='/js/dialogs/about.js'></script>
 		<script type='text/javascript' src='/admin/js/dialogs/new-session.js'></script>
+		<script type='text/javascript' src='/admin/js/dialogs/logs.js'></script>
+
 
 		<!-- Actions -->
 		<script type='text/javascript' src='/js/actions/action.js'></script>
 		<script type='text/javascript' src='/js/actions/init.js'></script>
 		<script type='text/javascript' src='/admin/js/actions/login.js'></script>
 		<script type='text/javascript' src='/js/actions/menu.js'></script>
+		<script type='text/javascript' src='/admin/js/actions/menu_server.js'></script>
 		<script type='text/javascript' src='/admin/js/actions/sessions.js'></script>
 		
 
@@ -55,9 +58,11 @@
 			<!-- Begin Menu -->
 			<ul id="menubar" class="menubar-icons" style="display:none;">
 				<li>
-					<a href="#">File</a>
+					<a href="#">Server</a>
 					<ul>
-						<li class="ui-state-disabled"><a href="#" id='logout'>Logout<span>Alt+X</span></a></li>
+						<li><a href="#" id='logs'>View Log(s)<span>Alt+L</span></a></li>
+						<li><a href="#" id='restart'>Restart<span>Alt+R</span></a></li>
+						<li><a href="#" id='stop'>Stop<span>Alt+S</span></a></li>
 					</ul>
 				</li>
 				<li>
