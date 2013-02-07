@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var fork = require('child_process').fork,
 join = require('path').join;
 

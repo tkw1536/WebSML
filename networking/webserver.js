@@ -252,9 +252,13 @@ var MakeDataObj = function(req, res, dataObj, options){
 			var name = parts[0].trim();
 			var value = (parts[ 1 ] || '' ).trim();
 			if(!cookies.all.hasOwnProperty(name)){
+				try{
+					value = JSON.parse(unescape(value));
+				} catch(e){
+				}
 				cookies.all[name] = {
 					"name":name, 
-					"value": JSON.parse(unescape(value)), 
+					"value": value, 
 					"options": {
 						"noSend": true
 					}
