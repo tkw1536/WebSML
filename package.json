@@ -20,7 +20,8 @@
   ],
   "dependencies" : {
     "jayson"   :  "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "node-which": "git://github.com/isaacs/node-which.git"
   },
   "engines": {
     "node": ">=0.8"

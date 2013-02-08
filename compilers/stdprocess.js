@@ -1,5 +1,5 @@
 var lib = require("./../lib/misc"),
-which = require("./../lib/which").sync,
+which = require("which").sync,
 spawn = require('child_process').spawn,
 path = require("path"),
 fs = require("fs"),

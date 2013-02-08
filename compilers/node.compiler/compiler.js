@@ -1,7 +1,7 @@
 //Node Compiler
 var Compiler = function(){
 	
-	this.Executable = "/usr/bin/node"; //Replace this by your executable
+	this.Executable = "node"; //Replace this by your executable
 	this.PreFileNameArgs = []; //Arguments prior to file name
 	this.PostFileNameArgs = []; //Arguments after file name
 	this.EmptyArguments = []; //Arguments for running compiler only. 

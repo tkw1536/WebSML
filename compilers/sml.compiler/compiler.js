@@ -1,7 +1,7 @@
 //SML Compiler
 var Compiler = function(){
 	
-	this.Executable = "/usr/share/smlnj/bin/sml"; //Replace this by your executable
+	this.Executable = "sml"; //Replace this by your executable
 	this.PreFileNameArgs = []; //Arguments prior to file name
 	this.PostFileNameArgs = []; //Arguments after file name
 	this.EmptyArguments = []; //Arguments for running compiler only. 

@@ -1,7 +1,7 @@
 //Sample Compiler
 var Compiler = function(){
 	//Setup
-	this.Executable = "/bin/cat"; //Replace this by your executable
+	this.Executable = "cat"; //Replace this by your executable
 	this.PreFileNameArgs = []; //Arguments prior to file name
 	this.PostFileNameArgs = []; //Arguments after file name
 	this.EmptyArguments = []; //Arguments for running compiler only. 
