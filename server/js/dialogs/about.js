@@ -20,7 +20,8 @@ jQuery(function(){
 		["jQuery UI", "http://jqueryui.com", "1.9.2", "MIT License", "http://jquery.org/license/"],
 		["node-which", "https://github.com/isaacs/node-which", "1.0.5", "Unknown License", "https://raw.github.com/isaacs/node-which/master/LICENSE"],
 		["jquery-dialogextend", "http://code.google.com/p/jquery-dialogextend/", "1.0.1", "MIT License", "http://www.opensource.org/licenses/mit-license.php"],
-		["Socket.IO", "https://github.com/LearnBoost/socket.io/", "0.9.10", "MIT License", "https://raw.github.com/LearnBoost/socket.io/master/LICENSE"]
+		["Socket.IO", "https://github.com/LearnBoost/socket.io/", "0.9.10", "MIT License", "https://raw.github.com/LearnBoost/socket.io/master/LICENSE"],
+		["Jayson", "https://github.com/tedeh/jayson", "1.0.6", "MIT License", "https://raw.github.com/tedeh/jayson/master/LICENSE"]
 		
 	];
 

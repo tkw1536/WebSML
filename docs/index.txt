@@ -1,0 +1,12 @@
+WebSML - Documentation
+----------------------
+This folder contains documentation about WebSML. 
+Note that the documentation is not complete. 
+It is accessible with the admin password via the web server at [ServerRoot]/admin/docs. 
+
+index.txt - This file
+compilers.txt - Information about the compiler system and how to add your own compilers
+providers.txt - Information about providers
+options.txt - Description of the various options
+sessions.txt - Information about sessions
+rpc.txt - Information about RPC functionailty

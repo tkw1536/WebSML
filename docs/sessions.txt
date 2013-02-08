@@ -1,0 +1,7 @@
+WebSML Sessions
+---------------
+Sessions in WebSML have an associated user, a SessionId and a folder (home directory). 
+Each user can only have one active session at a time. The user is constrained to the folder. 
+A session can be registered via RPC (see rpc.txt) or with the admin interface at [ServerRoot]/admin. 
+To associate a certain client (browser) to a session send the client to [ServerRoot]/session/[SessionId]. That client will then autonatically be redirected to the main page. Note that the sessions 
+(client-side) are stored via cookies. 

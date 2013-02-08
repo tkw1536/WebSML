@@ -1,13 +1,17 @@
 The compiler system
 -------------------------
-The compiler system has been split into Compiler Packages. Each package looks like this: 
+In WebSML several compilers can be used to execute files. 
+Every compiler has its own Package located at [Root]/Compilers/<Name>.compiler. 
+Compiler packages hav to be registered by adding its name to the option modes (see options.txt). 
+The compiler is choosen automatically by WebSML depending on the extension of the file. 
+Each package looks like this: 
 
 * <Name>.compiler
 	* info.json
 	* compiler.js
 	* ... (Further files required by the compiler)
 
-An exmaple info.json file looks like this: 
+An example info.json file looks like this: 
 ---------------
 {
 	"name": "Sample Compiler",
@@ -50,7 +54,7 @@ If the compiler is a normal compielr which works via stderr / stderr than the op
 * <function> __setup(<function> inheritFunction)
 	* 	is called before the compiler object is exported. The function inheritFunction (<obj> CompilerClass) is a function which takes exactly one argument (the compiler class) and adds the methods for a
 		normal compiler to it (as specefied above). Afterwards the following properties can be set: 
-		*	CompilerClass.Executable: Absolute path to the executable
+		*	CompilerClass.Executable: Name / Path of the executable. (STDPROCESS will now lookup executables in $PATH)
 		*	CompilerClass.PreFileNameArgs: Arguments passed to executable before the filename
 		*	CompilerClass.PostFileNameArgs: Arguments passed to executable after the filename
 		*	CompilerClass.EmptyArguments: Arguments if the compiler is run without anything. 

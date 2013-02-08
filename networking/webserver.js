@@ -404,14 +404,15 @@ WebServer.subServer = function(requestRoot, data){//Create a SubServer in the pa
 };
 
 WebServer.staticServer = function(root, options){
-	var options = lib.expand({
+	
+	var options = lib.expandIfNot({
 		"mimeTypes": {},
 		"indexFile": "index.html", //Index files
 		"ignore": function(){return false;},//is a file being ignored?
 		"404": WebServer.textServer(function(req, dataObj){return "HTTP 404\nRequested URL not found: "+dataObj.path+"\n";}, 404),
 		"401": WebServer.textServer(function(req, dataObj){return "HTTP 401\nAccess to requested URL denied: "+dataObj.path+"\n";}, 401),
-	}, options);
-	
+	}, lib.defineIfNull(options, {}));
+
 	options["404"] = WebServer.make(options["404"]);
 	options["401"] = WebServer.make(options["401"]);
 	

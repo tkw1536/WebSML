@@ -7,10 +7,6 @@ path = require("path"),
 jayson = require('jayson'),
 session = require('./../auth/session');
 
-/*
-	JASON
-*/
-
 var yason_wrapper = function(params, func, firstObj, thisObj){
 	var args = [];
 	for(var i=0;i<params.length;i++){

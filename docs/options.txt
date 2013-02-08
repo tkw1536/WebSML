@@ -1,0 +1,18 @@
+Options in WebSML
+-----------------
+In WebSML options are stored in the file [ROOT]/data/config.db. 
+The settings are stored in the JSON format. If this file does not exist, it will automatically be created, copying the default options. 
+The default options are stored in config/config.js (along with some other code). You can change the default options however for them to take effect you will have to delete [ROOT]/data/config.db. 
+Some options can be changed via RPC, see rpc.txt. 
+Available options: 
+
+server.port: Integer. Port WebSML should use to host the web server. Default: 80. 
+server.provider: The Provider that should be used to establish server/client communication (see also provider.txt). Default: 'socketio'. 
+
+modes: An array containing the supported compilers (see also: compilers.txt) Default: ['sml', 'node']
+
+accessData.admin.username: Username for admin access. Default: "admin"
+accessData.admin.password: Password for admin access. Default: "pleasechange"
+
+accessData.rpc.username: Username for RPC access. Default: "rpc"
+accessData.rpc.password: Password for RPC access. Default: "pleasechange"

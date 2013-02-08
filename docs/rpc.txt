@@ -1,0 +1,62 @@
+WebSML - RPC Access
+-------------------
+
+WebSML has a JSON 2.0 RPC interface (see http://www.jsonrpc.org/specification) which can be accessed at [ServerRoot]/rpc. 
+On top of the RPC interface is HTTP Basic access authentication, 
+this means the client should add a header field "authorization" with the value of BASE64_ENCODE(USERNAME+":"+PASSWORD). 
+(see http://www.ietf.org/rfc/rfc2617.txt)
+
+The username and password for RPC access is stored in the option accessData.rpc, see options.txt. 
+
+The following RPC methods are available: 
+
+test.echo(arg1, arg2, ...)
+	Test method. 
+	Returns the arguments given to it as an array. 
+
+server.restart()
+	Restarts the server. 
+	Returns true. 
+
+server.stop()
+	Stops the server
+	Returns true.
+ 
+server.getSessionId()
+	Returns the current Server session Id (which is used as the name for the log). 
+
+config.credentials(identity, username, password)
+	Changes the username and password for "rpc" or "admin". Requires a server restart to take effect. 
+	identity: "rpc" or "admin"
+	username: New username for specefied access method. 
+	password: New password. 
+	Returns a boolean indicating if it was successfull. 
+
+session.hasActiveSession(user)
+	Returns a boolean indicating if the user currently has an active session. 
+
+session.register(username, folder, [overwrite])
+	Registers a new session. 
+	username: Username for the new session. 
+	folder: folder to constrain the session to. 
+	overwrite: Optional. Should old sessions of the user automatically be expired? (Default: false). 
+	Returns the id of the session. 
+
+session.expire(sessionId)
+	Expires the session with the specefied id. 
+	Returns boolean indicating success. 
+
+session.list()
+	Lists all current sessions in an array with members of the form
+	[sessionId, ClientId (if any otherwise false), lastAccess, {
+		"user": Username
+		"data": {
+			"cwd": Session Folder	
+		}	
+	}]
+
+logs.list()
+	Returns an array containing all available log names as a string. 
+
+logs.view(name)
+	Returns the log with the specefied name as a string. (Warning: May be BIG. )

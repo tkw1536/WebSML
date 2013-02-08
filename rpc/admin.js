@@ -8,6 +8,7 @@ var adminAuth = WebServer.basicAuth('Admin Page',
 		return (new auth.request('admin', {'username': user, 'password': pass})).success;
 	}, 
 	[
+		WebServer.subServer("docs", WebServer.staticServer(__dirname+'/./../docs', {"indexFile": "index.txt"})),
 		WebServer.staticRequest("js/auth_data.js", WebServer.provideJS("adminKeys", function(req, data){return data.basicAuth;})),
 		WebServer.staticServer(__dirname+'/./../server_admin')
 	],
