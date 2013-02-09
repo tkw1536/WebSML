@@ -13,7 +13,12 @@ var yason_wrapper = function(params, func, firstObj, thisObj){
 		args.push(params[i]);
 	}
 	var callback = args.pop();
-	callback(firstObj, func.apply(thisObj, args));
+	try{
+		callback(firstObj, func.apply(thisObj, args));
+	} catch(e) {
+		callback({'code': -32603, 'message': 'Internal Error'}, null);
+		throw e; // Error
+	}
 };
 
 var server = jayson.server({
@@ -74,6 +79,18 @@ var server = jayson.server({
 	"session.expire": function(){
 		yason_wrapper(arguments, function(id){
 			return session.expire(id);
+		});
+	},
+	"session.pushsnippet": function(){
+		yason_wrapper(arguments, function(id, title, content){
+			try{
+				var s = session.get(id);
+				s.Events.emit('snippet', {'title': title, 'content': content});
+				return true;
+			} catch(e){
+				return false;
+			}
+			
 		});
 	},
 	"session.list": function(){

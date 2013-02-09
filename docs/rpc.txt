@@ -55,6 +55,10 @@ session.list()
 		}	
 	}]
 
+session.pushsnippet(sessionId, snippetTitle, snippetContent)
+	Pushes a snippet to the specefied session. 
+	Returns boolean indicating success. 
+
 logs.list()
 	Returns an array containing all available log names as a string. 
 

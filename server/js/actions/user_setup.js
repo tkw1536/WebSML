@@ -15,7 +15,7 @@
 	};
 
 	action.user_setup = function(next_step){
-		$("#logout, #settings, #settings_compiler, #open").parent().removeClass('ui-state-disabled');
+		$("#logout, #settings, #settings_compiler, #open, #new").parent().removeClass('ui-state-disabled');
 		$(window).resize(page_resize);
 		page_resize();
 

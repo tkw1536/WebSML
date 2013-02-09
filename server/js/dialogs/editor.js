@@ -1,62 +1,112 @@
-
-
-
 jQuery(function(){
-	var fileNames = [];
-	dialog.editor = function(dirName, fileName, content){
-		if(fileNames.indexOf(dirName+"/"+fileName) != -1){
-			dialog.alert("Error", "The file is already open. ", 200, function(){});
-			return false;
-		}
 
-		fileNames.push(dirName+"/"+fileName);
-
+	dialog.editor = function(title, content, parentFile){
 		var winElement = $("<div>").appendTo(document)
-
+		var force_dirt = false;
+		var title = title;
+		var allow_close = false;
 		winElement
-		.attr("title", fileName + " ["+dirName+"]")
-		.dialog().dialogExtend({'maximize': true});
+		.attr("title", title)
+		.dialog({
+			'beforeClose': function(){
+				if(!allow_close){
+					parentFile.close(false, function(){
+						allow_close = true;
+						winElement.dialog('close');
+					});
+					return allow_close;	
+				}
+					
+			}		
+		}).dialogExtend({'maximize': true});
 
 		var codeMirror = winElement.codeMirror({lineNumbers: true, value: content}, true);
 		$(winElement.find("div")[0]).css("width",  "100%");
+		
 
 		winElement.on('dialogclose', function(){
 			//dialog is closed
-			fileNames.splice(fileNames.indexOf(dirName+"/"+fileName), 1);
 			selectDialog(false);
 		});
+
 		winElement.on('click', function(){
-			selectDialog(winElement);
+			selectDialog(parentFile);
+			winElement.dialog('moveToTop');
+		});
+		winElement.click();
+
+		codeMirror.on('change', function(){
+			updateTitle();
 		});
 
-		winElement.data({"e_fileName": fileName, "e_dirName": dirName, "e_codeMirror": codeMirror})
+		var updateTitle = function(){
+			if(me.isChanged()){
+				winElement.dialog('option', 'title', "*"+title);
+			}
+		};
 
-		winElement.click();
-		return true;
+		
+		var me = {
+			"setTitle": function(text){
+				title = text;
+				winElement.dialog('option', 'title', text);
+				updateTitle();
+			},
+			"setContent": function(text){
+				return codeMirror.setValue(text)
+			},
+			"getContent": function(){
+				return codeMirror.getValue()
+			},
+			"focus": function(){
+				winElement.click();
+			},
+			"isChanged": function(){
+				return !codeMirror.isClean() || force_dirt;
+			},
+			"setUnChanged": function(){
+				force_dirt = false;
+				codeMirror.markClean();
+				updateTitle();	
+			},
+			"setChanged": function(){
+				force_dirt = true;
+				updateTitle();		
+			},
+			"close": function(){
+				allow_close = true;
+				winElement.dialog('close');
+			}
+		};
+
+		return me;
 	};
 
 	var elem = false;
 	var selectDialog = function(el){
 		if(el == false){
-			$("#save, #close, #compiler").parent().addClass("ui-state-disabled");
+			$("#save, #close, #save-as, #compiler").parent().addClass("ui-state-disabled");
 		} else {
-			$("#save, #close, #compiler").parent().removeClass("ui-state-disabled");
+			$("#save, #close, #save-as, #compiler").parent().removeClass("ui-state-disabled");
 		}
 		elem = el;
 	}
 
-	//register all Handlers
-
 	$("#save").enabled_click(function(){
-		dialog.saveFileDialog(elem.data("e_dirName"), elem.data("e_fileName"), elem.data("e_codeMirror").getValue());
+		elem.save();
+		return false;
+	});
+
+	$("#save-as").enabled_click(function(){
+		elem.saveAs();
 		return false;
 	});
 
 	$("#close").enabled_click(function(){
-		elem.dialog("close");//TODO: Add 'Do you really want to close this' dialog...
+		elem.close();
 	});
 	
 	$("#compiler").enabled_click(function(){
-		dialog.runCompiler(elem.data("e_dirName"), elem.data("e_fileName"));
-	});
+		elem.compile();
+	});	
 });

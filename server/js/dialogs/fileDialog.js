@@ -1,12 +1,145 @@
 //Open a File Dialog
 jQuery(function(){
+
+	var Files = [];
+
+	var File = function(dirname, filename, b_content){
+		/* file interface */
+		var me = this;
+		var editor = undefined;
+		var dirname = dirname;
+		var filename = filename;
+		if(typeof dirname != 'string'){
+			//Create a new File	
+			this.save = function(cb){
+				this.save = function(cb){
+					return this._save(cb);		
+				};
+				this.saveAs(cb);
+			};
+			if(typeof filename == 'string'){
+				editor = dialog.editor("["+filename+"]", b_content, me);		
+			} else {
+				editor = dialog.editor("[New File]", "", me);
+			}
+			dirname = '';
+			filename = '';
+
+			
+			editor.setChanged();	
+		} else {
+			this.save = function(cb){
+				return this._save(cb);		
+			};
 	
+			client.FileServerClient.readFile(dirname, filename, function(suc, content){
+				if(!suc){
+					dialog.alert("Oops", "That file couldn't be opened for some reason. ", 200);
+				} else {
+					editor = dialog.editor(filename+" ["+dirname+"]", content, me);	
+				}
+			});
+		}
+
+		this.is = function(d, f){
+			return ((dirname == d)&&(filename == f));
+		};
+
+		this.saveAs = function(cb){
+			//Save as
+			dialog.FileDialog("Save as", function(d, f){
+				dirname = d;
+				filename = f;
+				me.save(cb);
+			});
+		};
+
+		this._save = function(cb){//Saves a file
+			client.FileServerClient.writeFile(dirname, filename, editor.getContent(), true, function(suc){
+				if(!suc){
+					dialog.alert("Oops", "That file couldn't be saved for some reason. ", 200);				
+				} else {
+					if(typeof cb == 'function'){
+						cb();				
+					}					
+				}
+			})
+			editor.setUnChanged();
+			editor.setTitle(filename+" ["+dirname+"]");
+		};
+
+		this.close = function(f, cb){
+			//Closes this file, checks for edits
+			if(f){
+				for(var i=0;i<Files.length;i++){
+					if(Files[i].is(dirname, filename)){
+						Files.splice(i, 1);
+					}		
+				}
+				editor.close();
+				cb(true);
+				return true;
+			} else {
+				if(editor.isChanged()){
+					dialog.confirm("File not saved. ", "The file has not been saved. Close it anways? ", 200, function(){
+						me.close(true, cb);
+					}, function(){})
+				} else {
+					return this.close(true, cb);	
+				}
+			}
+		
+		};
+
+		this.compile = function(){
+			//Runs the compiler on this File: TODO!
+			if(editor.isChanged()){
+				dialog.confirm("File not saved. ", "The file has not been saved. You have to save it first to compile this file. Save now? ", 200, function(){
+					me.save(function(){
+						me.compile();					
+					});
+					
+				}, function(){})
+			} else {
+				dialog.runCompiler(dirname, filename);			
+			}
+		};
+
+		this.focus = function(){
+			editor.focus();
+		};
+
+		Files.push(this);
+	};
+
+	File.open = function(callback){
+		dialog.FileDialog("Open File", function(dirname, filename){
+			for(var i=0;i<Files.length;i++){
+				if(Files[i].is(dirname, filename)){
+					Files[i].focus();
+					callback(false);
+					return false;			
+				}		
+			}
+
+			var f = new File(dirname, filename);
+			callback(f);
+			return f;
+		});
+	};
+
 	var is_dialog_open = false;
 
-	dialog.FileDialog = function(title, buttonText, callback, fallback){
+	dialog.FileDialog = function(title, callback, fallback, options){
+		var options = (typeof options == 'undefined')?{}:options;
+		var buttonText = (typeof options.buttonText == 'undefined')?title:options.buttonText;
+		var defname = (typeof options.defname == 'undefined')?"":options.defname;
+		var callback = (typeof callback == 'function')?callback:function(){};
+		var fallback = (typeof fallback == 'function')?fallback:function(){};	
+
 		if(is_dialog_open){
 			fallback();
-			return false;		
+			return false;
 		}
 		is_dialog_open = true;
 
@@ -20,7 +153,7 @@ jQuery(function(){
 		var DirName = $(odialog.find("td")[2]).css("width", "20%");
 		var FileList = $(odialog.find("td")[1]).css("width", "80%").append("<div class='fill'>").find("div");
 		var OpenLine = $(odialog.find("td")[3]).css({"width": "80%", "height": 30}).append("<input type='text' style='width:100%; '>");
-		var FileNameBox = OpenLine.find("input").val("/unnamed.txt");
+		var FileNameBox = OpenLine.find("input").val(defname);
 		var ActionLine = $(odialog.find("td")[4]).css({"width": "80%", "height": 30});
 		odialog.find("td").css({"vertical-align": 'top'});
 		var uptr = $(odialog.find("tr")[0]);		
@@ -97,27 +230,14 @@ jQuery(function(){
 	}
 
 	$("#open").enabled_click(function(){
-		dialog.FileDialog("Open File / Create new", "Open / Create", function(dir, file){
-			client.FileServerClient.readFile(dir, file, function(success, content){
-				if(success){
-					dialog.editor(dir, file, content);
-				} else {
-					dialog.editor(dir, file, "");
-				}
-			});
-					
-		}, function(){});
-		return false;
+		File.open(function(){});
 	});
 
-	dialog.saveFileDialog = function(dir, file, content){
-		client.FileServerClient.writeFile(dir, file, content, true, function(success){
-			if(success){
-				dialog.alert("Save", "File saved. ", 250, function(){});
-			} else {
-				dialog.alert("Save failed", "File could not be saved. ", 250, function(){});
-			}
-		});
-	};
+	$("#new").enabled_click(function(){
+		new File();
+	});
 
+	client.on('push_snippet', function(data){
+		new File(false, data['title'], data['content']);	
+	});
 });

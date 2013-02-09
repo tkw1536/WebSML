@@ -32,50 +32,64 @@ var provider = new provider_data[0](server, config.server.port);
 
 var authServer = authServer(provider, 
 	function(socket, cred, userData){
+		var session = userData.session;
 
 		var fs = FileServer(socket, {'root': userData['cwd']});
 		var cs = CompilerServer(socket, userData['cwd'], authServer);
 
 		process.send(['Session.Access', userData.session.key]);
 		socket.on('disconnect', function(){
-			process.send(['Session.Exit', userData.session.key]);
+			process.send(['Session.Exit', session.key]);
 		});
-		userData['session'].Events.on('kick', function(){socket.end()});
+
+		session.Events.on('kick', function(){socket.end()});
+
+		session.Events.on('snippet', function(data){
+			socket.emit('push_snippet', data);
+		});
 		
+		/* Logging */
+
 		cs.on('on', function(filename, ok){
 			if(ok){
-				process.send(['Session.Interpreter.Start', userData.session.key, filename]);		
+				process.send(['Session.Interpreter.Start', session.key, filename]);
 			}
 		});
 		cs.on('exit', function(filename){
-				process.send(['Session.Interpreter.Exit', userData.session.key, filename]);
+				process.send(['Session.Interpreter.Exit', session.key, filename]);
 		});
 		
 		fs.on('listDir', function(dir){
-			process.send(['Session.FileSystem.ListDir', userData.session.key, dir]);
+			process.send(['Session.FileSystem.ListDir', session.key, dir]);
 		});
 	
 		fs.on('makeDir', function(dir){
-			process.send(['Session.FileSystem.MakeDir', userData.session.key, dir]);
+			process.send(['Session.FileSystem.MakeDir', session.key, dir]);
 		});
 	
 		fs.on('deleteDir', function(dir){
-			process.send(['Session.FileSystem.DeleteDir', userData.session.key, dir]);
+			process.send(['Session.FileSystem.DeleteDir', session.key, dir]);
 		});
 
 		fs.on('readFile', function(file){
-			process.send(['Session.FileSystem.ReadFile', userData.session.key, file]);
+			process.send(['Session.FileSystem.ReadFile', session.key, file]);
+			session.Events.emit('fileRead', file);		
 		});
 	
 		fs.on('writeFile', function(file){
-			process.send(['Session.FileSystem.WriteFile', userData.session.key, file]);
+			process.send(['Session.FileSystem.WriteFile', session.key, file]);
+			session.Events.emit('fileWrite', file);
 		});
 	
 		fs.on('deleteFile', function(file){
-			process.send(['Session.FileSystem.DeleteFile', userData.session.key, file]);
+			process.send(['Session.FileSystem.DeleteFile', session.key, file]);
+			session.Events.emit('fileDelete', file);
 		});
 
-		
+		socket.on('fs_closefile', function(file){
+			session.Events.emit('fileClose', file);
+		});
+
 	},
 	admin.services
 );

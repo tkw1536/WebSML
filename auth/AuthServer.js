@@ -13,7 +13,7 @@ var authServer = function(Provider, onAuth, onAdminAuth){
 							if(request.role == 'admin'){
 								onAdminAuth(socket, request.credentials)
 							} else {
-								onAuth(socket, request.credentials, request.userData)
+								onAuth(socket, request.credentials, request.userData, request.session);
 							}
 						} else {
 							if(request.role == 'admin'){
