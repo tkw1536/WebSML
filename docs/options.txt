@@ -6,10 +6,10 @@ The default options are stored in config/config.js (along with some other code).
 Some options can be changed via RPC, see rpc.txt. 
 Available options: 
 
-server.port: Integer. Port WebSML should use to host the web server. Default: 80. 
+server.port: Integer. Port WebSML should use to host the web server. Default: 8080. 
 server.provider: The Provider that should be used to establish server/client communication (see also provider.txt). Default: 'socketio'. 
 
-modes: An array containing the supported compilers (see also: compilers.txt) Default: ['sml', 'node']
+modes: An array containing the supported compilers (see also: compilers.txt) Default: ['sml', 'node', 'python']
 
 accessData.admin.username: Username for admin access. Default: "admin"
 accessData.admin.password: Password for admin access. Default: "pleasechange"

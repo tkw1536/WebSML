@@ -9,10 +9,10 @@ db.openBase("config", {//Default Settings can be changed via admin panel
 	//server config
 	'server': 
 	{
-		'port': 80, //port for server, default: 80
+		'port': 8080, //port for server, default: 80
 		'provider': 'socketio' //Connection Provider to use
 	},
-	'modes': ['sml', 'node'],//Supported compiler(s)
+	'modes': ['sml', 'node', 'python'],//Supported compiler(s)
 	'accessData':
 	{
 		'admin': {'username': 'admin', 'password': 'pleasechange'},

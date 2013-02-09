@@ -24,7 +24,8 @@ $(function(){
 		});
 
 		client.CompilerServerClient.runFile(dirName, fileName, function(success){
-			if(success == false){
+			if(!success){
+				console.log("False");
 				div
 				.webTerminal("echo", "[FATAL] Server side error. Make sure the filetype is supported. ", function(){this.css("color", "red");})
 				.webTerminal("disable");

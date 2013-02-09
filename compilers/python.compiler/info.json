@@ -1,0 +1,7 @@
+{
+	"name": "Python",
+	"version": "???",
+	"description": "Python Interpreter",
+	"supportedExtensions": ["py"],
+	"stdProcess": true
+}
