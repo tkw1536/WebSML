@@ -85,9 +85,9 @@ jQuery(function(){
 	var elem = false;
 	var selectDialog = function(el){
 		if(el == false){
-			$("#save, #close, #save-as, #compiler").parent().addClass("ui-state-disabled");
+			$("#save, #close, #save-as, #delete, #compiler").parent().addClass("ui-state-disabled");
 		} else {
-			$("#save, #close, #save-as, #compiler").parent().removeClass("ui-state-disabled");
+			$("#save, #close, #save-as, #delete, #compiler").parent().removeClass("ui-state-disabled");
 		}
 		elem = el;
 	}
@@ -109,4 +109,8 @@ jQuery(function(){
 	$("#compiler").enabled_click(function(){
 		elem.compile();
 	});	
+	
+	$("#delete").enabled_click(function(){
+		elem.deleteClose();
+	});
 });

@@ -9,12 +9,15 @@ jQuery(function(){
 		var editor = undefined;
 		var dirname = dirname;
 		var filename = filename;
+		var block_delete = false;
 		if(typeof dirname != 'string'){
 			//Create a new File	
+			block_delete = true;
 			this.save = function(cb){
 				this.save = function(cb){
 					return this._save(cb);		
 				};
+				
 				this.saveAs(cb);
 			};
 			if(typeof filename == 'string'){
@@ -59,6 +62,7 @@ jQuery(function(){
 				if(!suc){
 					dialog.alert("Oops", "That file couldn't be saved for some reason. ", 200);				
 				} else {
+					block_delete = false;
 					if(typeof cb == 'function'){
 						cb();				
 					}					
@@ -77,7 +81,7 @@ jQuery(function(){
 					}		
 				}
 				editor.close();
-				cb(true);
+				if(typeof cb == 'function'){cb(true);}
 				return true;
 			} else {
 				if(editor.isChanged()){
@@ -91,6 +95,24 @@ jQuery(function(){
 		
 		};
 
+		this.deleteClose = function(cb){
+			var cb = (typeof cb == 'function')?cb:function(){};
+			if(block_delete){
+				dialog.alert("Error", "This can not be deleted. Try again later. ", 200, function(){});
+				cb(false);
+				return;
+			}
+			dialog.confirm("Deleting the file. ", "Do you really wish to delete this file? THIS CANNOT BE UNDONE. ", 200, function(){
+				me.close(true, function(){
+					client.FileServerClient.deleteFile(dirname, filename, function(suc){
+						if(!suc){
+							dialog.alert("Error", "The file wasn't deleted for some reason. ", 200, function(){});
+						}
+					});				
+				});
+			}, function(){cb(false);})
+		};
+
 		this.compile = function(){
 			//Runs the compiler on this File: TODO!
 			if(editor.isChanged()){
@@ -99,7 +121,7 @@ jQuery(function(){
 						me.compile();					
 					});
 					
-				}, function(){})
+				}, function(){});
 			} else {
 				dialog.runCompiler(dirname, filename);			
 			}
