@@ -5,3 +5,4 @@ Each user can only have one active session at a time. The user is constrained to
 A session can be registered via RPC (see rpc.txt) or with the admin interface at [ServerRoot]/admin. 
 To associate a certain client (browser) to a session send the client to [ServerRoot]/session/[SessionId]. That client will then autonatically be redirected to the main page. Note that the sessions 
 (client-side) are stored via cookies. 
+Session auto-expire if they are not used for mode than one hour. This can be changed in the options (see: options.txt)

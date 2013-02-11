@@ -8,6 +8,9 @@ jQuery(function(){
 			+"A new window will open which will run your code. You can enter text at the bottom of that window, which will then be evaluated by the compiler. <br />"
 			+"To interrupt the compiler, click <i>Compiler->Send CTRL-C (Ctrl+C)</i>. <br />"
 			+"To stop the compiler, either just close the window or click <i>Compiler->Send CTRL-D (Ctrl+D)</i>. "
+		],
+		["Issues", 
+			"If you think you found a bug, please add an issue on github: <a href='https://github.com/tkw1536/WebSML/issues'>https://github.com/tkw1536/WebSML/issues</a>. "		
 		]
 	];
 

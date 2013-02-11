@@ -16,3 +16,5 @@ accessData.admin.password: Password for admin access. Default: "pleasechange"
 
 accessData.rpc.username: Username for RPC access. Default: "rpc"
 accessData.rpc.password: Password for RPC access. Default: "pleasechange"
+
+session.autoExpire: Time in seconds a session can be active before it automatically expires. 0 or smaller disabled session auto Expiring. Defeult: 3600 (1 hour)

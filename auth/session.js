@@ -1,9 +1,10 @@
-var EventEmitter = require("events").EventEmitter;
+var EventEmitter = require("events").EventEmitter,
+config = require("./../config/config");
 var now = function(){return (new Date()).getTime();};
 var sessionCache = [];//untaken session Id
 var validSessions = [];
 var sessionData = {};
-var maxLength = 60*60*1000; //1 Hour
+var maxLength = config.session.autoExpire*1000; //1 Hour
 var newKey = function(){
 	var rnd = function(){return Math.random().toString().split(".")[1];};
 	return now().toString()+"_"+rnd()+"_"+rnd();
@@ -68,7 +69,7 @@ module.exports = {
 	"cleanup": function(){
 		for(var key in sessionData){
 			var session = sessionData[key];
-			if(session.lastAccess + maxLength < now()){
+			if(maxLength > 0 && session.lastAccess + maxLength < now()){
 				session.expire();			
 			}
 		}

@@ -17,6 +17,10 @@ db.openBase("config", {//Default Settings can be changed via admin panel
 	{
 		'admin': {'username': 'admin', 'password': 'pleasechange'},
 		'rpc': {'username': 'rpc', 'password': 'pleasechange'}
+	},
+	'session':
+	{
+		'autoExpire': 3600
 	}
 });
 
