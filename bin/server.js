@@ -1,7 +1,7 @@
 //Make a simple echo Server
 var path = require("path"),
 config = require("./../config/config"),
-WebServer = require("./../networking/webserver"),
+WebServer = require("yawsl"),
 provider = require("./../networking/provider"),
 authServer = require("./../auth/AuthServer"),
 admin = require("./../rpc/admin"),

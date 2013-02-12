@@ -1,4 +1,4 @@
-var WebServer = require("./../networking/webserver");
+var WebServer = require("yawsl");
 var session = require("./session");
 
 

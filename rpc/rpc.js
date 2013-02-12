@@ -1,6 +1,6 @@
 var config = require("./../config/config"),
 auth = require("./../auth/auth"),
-WebServer = require("./../networking/webserver"),
+WebServer = require("yawsl"),
 lib = require("./../lib/misc"),
 fs = require("fs"),
 path = require("path"),

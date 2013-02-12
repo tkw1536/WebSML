@@ -7,7 +7,7 @@
   "scripts": {
     "start": "bin/main.js"
   },
-  "main": "./lib/http-server",
+  "main": "./bin/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/tkw1536/WebSML.git"
@@ -21,7 +21,8 @@
   "dependencies" : {
     "jayson"   :  "*",
     "socket.io": "*",
-    "node-which": "git://github.com/isaacs/node-which.git"
+    "node-which": "git://github.com/isaacs/node-which.git",
+    "yawsl": "git://github.com/tkw1536/YAWSL.git"
   },
   "engines": {
     "node": ">=0.8"

@@ -1,4 +1,4 @@
-var WebServer = require("./../networking/webserver"),
+var WebServer = require("yawsl"),
 auth = require("./../auth/auth"),
 client = require("./client"),
 config = require("./../config/config");
