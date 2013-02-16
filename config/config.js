@@ -21,6 +21,17 @@ db.openBase("config", {//Default Settings can be changed via admin panel
 	'session':
 	{
 		'autoExpire': 3600
+	},
+	'sandbox':
+	{
+		'enabled': false,
+		'command': 'soapbox',
+		'arguments': [
+			'-p',
+			0, //%dir%
+			1, //%executable%
+			2  //%args%
+		]
 	}
 });
 

@@ -18,3 +18,7 @@ accessData.rpc.username: Username for RPC access. Default: "rpc"
 accessData.rpc.password: Password for RPC access. Default: "pleasechange"
 
 session.autoExpire: Time in seconds a session can be active before it automatically expires. 0 or smaller disabled session auto Expiring. Defeult: 3600 (1 hour)
+
+config.sandbox.enabled: Enable or disable process sandboxing. 
+config.sandbox.command: Command to use for sandboxing. 
+config.sandbox.arguments: Array of (string) arguments to pass to the sandbox command. May also contain the interger numbers 0, 1 or 2. The number 0 will be replaced by the directory in which writing shuld be allowed, 1 will be replaced by the full path to the executable, 2 will be rplaced by the arguments for the compiler process. The default setting of this valus can be used with soapbox. 

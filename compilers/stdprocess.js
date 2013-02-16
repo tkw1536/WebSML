@@ -3,7 +3,8 @@ which = require("which").sync,
 spawn = require('child_process').spawn,
 path = require("path"),
 fs = require("fs"),
-events = require("events");
+events = require("events"),
+config = require("./../config/config");
 
 function Compiler(callback, cwd, dirname, filename)
 {
@@ -43,7 +44,31 @@ function Compiler(callback, cwd, dirname, filename)
 		if(typeof dirname == 'string' && typeof filename == 'string'){
 			this.compilerArgs = this.PreFileNameArgs.concat([path.resolve(path.join(dirname, filename))], this.PostFileNameArgs);
 		}
-	
+
+		this.Executable = which(this.Executable);
+
+		var Args = [];
+
+		//Build wrapper arguments
+		if(config.sandbox.enabled){
+			for(var i=0;i<config.sandbox.arguments.length;i++){
+				var arg = config.sandbox.arguments[i];
+				if(arg == 0){
+					Args.push(this.cwd);
+				} else if(arg == 1){
+					Args.push(this.Executable);
+				} else if(arg == 2){
+					for(var j=0;j<this.compilerArgs.length;j++){
+						Args.push(this.compilerArgs[j]);
+					}
+				} else {
+					Args.push(arg);
+				}
+			}
+			this.Executable = which(config.sandbox.command);
+			this.compilerArgs = Args;
+		}
+
 		this.runLevel = 2;
 
 		callback(true);
@@ -60,9 +85,10 @@ Compiler.prototype.start = function()
 		return false;	
 	}
 	this.runLevel = 3;
+	
 	//Start the process
 	this.process = spawn(
-		which(this.Executable), 
+		this.Executable, 
 		this.compilerArgs,
 		{
 			'cwd': this.cwd

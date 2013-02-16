@@ -1,7 +1,7 @@
 {
   "name": "WebSML",
   "preferGlobal": true,
-  "version": "07.02.2013",
+  "version": "16.02.2013",
   "author": "tkw01536 <tkw01536@gmail.com>",
   "description": "a way of running sml online",
   "scripts": {
@@ -22,7 +22,7 @@
     "jayson"   :  "*",
     "socket.io": "*",
     "node-which": "git://github.com/isaacs/node-which.git",
-    "yawsl": "git://github.com/tkw1536/YAWSL.git"
+    "yawsl": "git://github.com/tkw1536/YAWSL.git#master"
   },
   "engines": {
     "node": ">=0.8"
