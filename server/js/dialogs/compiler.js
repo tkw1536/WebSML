@@ -36,7 +36,7 @@ $(function(){
 		}, function(stdOut){
 			div.webTerminal("echo", stdOut);
 		}, function(stdErr){
-			
+			div.webTerminal("echo", stdErr, function(){this.css("color", "red");});
 		}, function(endCode){
 			//Terminal ended
 			div.webTerminal("echo", "", function(e){
